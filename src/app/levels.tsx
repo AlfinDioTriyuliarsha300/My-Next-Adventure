@@ -1,8 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 import {
   ActivityIndicator,
@@ -14,67 +10,55 @@ import {
   Text,
   View,
   useWindowDimensions,
-} from 'react-native';
+} from "react-native";
 
-import { router } from 'expo-router';
+import { router } from "expo-router";
 
 import {
   getStudentLevelProgress,
   getStudentTotalPoints,
-} from '../services/auth/authService';
+} from "../services/auth/authService";
 
 const levels = [
   {
     id: 1,
-    color: require('../../assets/images/levels/level-1-color.png'),
-    gray: require('../../assets/images/levels/level-1-gray.png'),
+    color: require("../../assets/images/levels/level-1-color.png"),
+    gray: require("../../assets/images/levels/level-1-gray.png"),
   },
   {
     id: 2,
-    color: require('../../assets/images/levels/level-2-color.png'),
-    gray: require('../../assets/images/levels/level-2-gray.png'),
+    color: require("../../assets/images/levels/level-2-color.png"),
+    gray: require("../../assets/images/levels/level-2-gray.png"),
   },
   {
     id: 3,
-    color: require('../../assets/images/levels/level-3-color.png'),
-    gray: require('../../assets/images/levels/level-3-gray.png'),
+    color: require("../../assets/images/levels/level-3-color.png"),
+    gray: require("../../assets/images/levels/level-3-gray.png"),
   },
   {
     id: 4,
-    color: require('../../assets/images/levels/level-4-color.png'),
-    gray: require('../../assets/images/levels/level-4-gray.png'),
+    color: require("../../assets/images/levels/level-4-color.png"),
+    gray: require("../../assets/images/levels/level-4-gray.png"),
   },
   {
     id: 5,
-    color: require('../../assets/images/levels/level-5-color.png'),
-    gray: require('../../assets/images/levels/level-5-gray.png'),
+    color: require("../../assets/images/levels/level-5-color.png"),
+    gray: require("../../assets/images/levels/level-5-gray.png"),
   },
 ];
 
 export default function LevelsScreen() {
-  const { width, height } =
-    useWindowDimensions();
+  const { width, height } = useWindowDimensions();
 
-  const [
-    currentLevel,
-    setCurrentLevel,
-  ] = useState(1);
+  const [currentLevel, setCurrentLevel] = useState(1);
 
-  const [
-    unlockedLevels,
-    setUnlockedLevels,
-  ] = useState(1);
+  const [unlockedLevels, setUnlockedLevels] = useState(1);
 
-  const [
-    totalPoints,
-    setTotalPoints,
-  ] = useState(0);
+  const [totalPoints, setTotalPoints] = useState(0);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const backgroundImage =
-    require('../../assets/images/levels/levels-background.png');
+  const backgroundImage = require("../../assets/images/levels/levels-background.png");
 
   /**
    * =====================================================
@@ -82,71 +66,54 @@ export default function LevelsScreen() {
    * =====================================================
    */
 
-  const loadLevelProgress =
-    useCallback(async () => {
-      try {
-        setLoading(true);
+  const loadLevelProgress = useCallback(async () => {
+    try {
+      setLoading(true);
 
-        /*
-         * Ambil progress level dan total poin
-         * secara bersamaan.
-         */
-        const [
-          progress,
-          points,
-        ] = await Promise.all([
-          getStudentLevelProgress(),
-          getStudentTotalPoints(),
-        ]);
+      /*
+       * Ambil progress level dan total poin
+       * secara bersamaan.
+       */
+      const [progress, points] = await Promise.all([
+        getStudentLevelProgress(),
+        getStudentTotalPoints(),
+      ]);
 
-        /*
-         * Simpan total poin.
-         */
-        setTotalPoints(points);
+      /*
+       * Simpan total poin.
+       */
+      setTotalPoints(points);
 
-        /*
-         * Level 1 selalu terbuka.
-         */
-        let highestUnlocked = 1;
+      /*
+       * Level 1 selalu terbuka.
+       */
+      let highestUnlocked = 1;
 
-        progress.forEach((item) => {
-          if (
-            item.unlocked &&
-            item.level_number >
-              highestUnlocked
-          ) {
-            highestUnlocked =
-              item.level_number;
-          }
-        });
+      progress.forEach((item) => {
+        if (item.unlocked && item.level_number > highestUnlocked) {
+          highestUnlocked = item.level_number;
+        }
+      });
 
-        setUnlockedLevels(
-          Math.min(
-            highestUnlocked,
-            5
-          )
-        );
-      } catch (error) {
-        console.error(
-          'Load level progress error:',
-          error
-        );
+      setUnlockedLevels(Math.min(highestUnlocked, 5));
+    } catch (error) {
+      console.error("Load level progress error:", error);
 
-        /*
-         * Jika progress belum ada,
-         * Level 1 tetap bisa dimainkan.
-         */
-        setUnlockedLevels(1);
+      /*
+       * Jika progress belum ada,
+       * Level 1 tetap bisa dimainkan.
+       */
+      setUnlockedLevels(1);
 
-        /*
-         * Jika gagal mengambil poin,
-         * tampilkan 0.
-         */
-        setTotalPoints(0);
-      } finally {
-        setLoading(false);
-      }
-    }, []);
+      /*
+       * Jika gagal mengambil poin,
+       * tampilkan 0.
+       */
+      setTotalPoints(0);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     loadLevelProgress();
@@ -158,14 +125,11 @@ export default function LevelsScreen() {
    * =====================================================
    */
 
-  const isUnlocked =
-    currentLevel <=
-    unlockedLevels;
+  const isUnlocked = currentLevel <= unlockedLevels;
 
-  const currentImage =
-    isUnlocked
-      ? levels[currentLevel - 1].color
-      : levels[currentLevel - 1].gray;
+  const currentImage = isUnlocked
+    ? levels[currentLevel - 1].color
+    : levels[currentLevel - 1].gray;
 
   /**
    * =====================================================
@@ -173,35 +137,19 @@ export default function LevelsScreen() {
    * =====================================================
    */
 
-  const isPhone =
-    width < 600;
+  const isPhone = width < 600;
 
-  const islandWidth =
-    Math.min(
-      width *
-        (isPhone
-          ? 0.86
-          : 0.72),
-      560
-    );
+  const islandWidth = Math.min(width * (isPhone ? 0.86 : 0.72), 560);
 
-  const islandHeight =
-    Math.min(
-      height * 0.72,
-      760
-    );
+  const islandHeight = Math.min(height * 0.72, 760);
 
-  const arrowSize =
-    isPhone ? 38 : 52;
+  const arrowSize = isPhone ? 38 : 52;
 
-  const topButtonSize =
-    isPhone ? 38 : 48;
+  const topButtonSize = isPhone ? 38 : 48;
 
-  const pointsWidth =
-    isPhone ? 118 : 145;
+  const pointsWidth = isPhone ? 118 : 145;
 
-  const pointsHeight =
-    isPhone ? 42 : 50;
+  const pointsHeight = isPhone ? 42 : 50;
 
   /**
    * =====================================================
@@ -210,13 +158,7 @@ export default function LevelsScreen() {
    */
 
   function handlePrevious() {
-    setCurrentLevel(
-      (previous) =>
-        Math.max(
-          1,
-          previous - 1
-        )
-    );
+    setCurrentLevel((previous) => Math.max(1, previous - 1));
   }
 
   /**
@@ -226,13 +168,7 @@ export default function LevelsScreen() {
    */
 
   function handleNext() {
-    setCurrentLevel(
-      (previous) =>
-        Math.min(
-          5,
-          previous + 1
-        )
-    );
+    setCurrentLevel((previous) => Math.min(5, previous + 1));
   }
 
   /**
@@ -244,22 +180,24 @@ export default function LevelsScreen() {
   function handleSelectLevel() {
     if (!isUnlocked) {
       Alert.alert(
-        'Level Terkunci',
-        'Selesaikan level sebelumnya untuk membuka petualangan ini.'
+        "Level Terkunci",
+        "Selesaikan level sebelumnya untuk membuka petualangan ini.",
       );
 
       return;
     }
 
     if (currentLevel === 1) {
-      router.push('/level-1');
+      router.push("/level-1");
       return;
     }
 
-    Alert.alert(
-      `Level ${currentLevel}`,
-      'Materi level ini akan segera hadir.'
-    );
+    if (currentLevel === 2) {
+      router.push("/level-2");
+      return;
+    }
+
+    Alert.alert(`Level ${currentLevel}`, "Materi level ini akan segera hadir.");
   }
 
   /**
@@ -275,21 +213,10 @@ export default function LevelsScreen() {
         style={styles.container}
         resizeMode="cover"
       >
-        <View
-          style={styles.loadingContainer}
-        >
-          <ActivityIndicator
-            size="large"
-            color="#FFFFFF"
-          />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
 
-          <Text
-            style={
-              styles.loadingText
-            }
-          >
-            Memuat level...
-          </Text>
+          <Text style={styles.loadingText}>Memuat level...</Text>
         </View>
       </ImageBackground>
     );
@@ -308,15 +235,12 @@ export default function LevelsScreen() {
       resizeMode="cover"
     >
       <View style={styles.overlay}>
-
         {/* =========================
             BACK BUTTON
         ========================= */}
 
         <Pressable
-          onPress={() =>
-            router.replace('/student')
-          }
+          onPress={() => router.replace("/student")}
           style={[
             styles.topButton,
             styles.backButton,
@@ -327,7 +251,7 @@ export default function LevelsScreen() {
           ]}
         >
           <Image
-            source={require('../../assets/images/buttons/back.png')}
+            source={require("../../assets/images/buttons/back.png")}
             style={styles.topButtonImage}
             resizeMode="contain"
           />
@@ -350,25 +274,19 @@ export default function LevelsScreen() {
             style={[
               styles.pointsIcon,
               {
-                fontSize: isPhone
-                  ? 17
-                  : 21,
+                fontSize: isPhone ? 17 : 21,
               },
             ]}
           >
             ⭐
           </Text>
 
-          <View
-            style={styles.pointsTextContainer}
-          >
+          <View style={styles.pointsTextContainer}>
             <Text
               style={[
                 styles.pointsValue,
                 {
-                  fontSize: isPhone
-                    ? 16
-                    : 19,
+                  fontSize: isPhone ? 16 : 19,
                 },
               ]}
             >
@@ -379,9 +297,7 @@ export default function LevelsScreen() {
               style={[
                 styles.pointsLabel,
                 {
-                  fontSize: isPhone
-                    ? 9
-                    : 10,
+                  fontSize: isPhone ? 9 : 10,
                 },
               ]}
             >
@@ -395,9 +311,7 @@ export default function LevelsScreen() {
         ========================= */}
 
         <Pressable
-          onPress={() =>
-            router.push('/settings')
-          }
+          onPress={() => router.push("/settings")}
           style={[
             styles.topButton,
             styles.settingsButton,
@@ -408,7 +322,7 @@ export default function LevelsScreen() {
           ]}
         >
           <Image
-            source={require('../../assets/images/buttons/settings.png')}
+            source={require("../../assets/images/buttons/settings.png")}
             style={styles.topButtonImage}
             resizeMode="contain"
           />
@@ -419,9 +333,7 @@ export default function LevelsScreen() {
         ========================= */}
 
         <Pressable
-          onPress={
-            handleSelectLevel
-          }
+          onPress={handleSelectLevel}
           style={[
             styles.levelImageWrapper,
             {
@@ -443,9 +355,7 @@ export default function LevelsScreen() {
 
         <Pressable
           onPress={handlePrevious}
-          disabled={
-            currentLevel === 1
-          }
+          disabled={currentLevel === 1}
           style={[
             styles.arrowButton,
             styles.arrowLeft,
@@ -453,15 +363,12 @@ export default function LevelsScreen() {
               width: arrowSize,
               height: arrowSize,
 
-              opacity:
-                currentLevel === 1
-                  ? 0.4
-                  : 1,
+              opacity: currentLevel === 1 ? 0.4 : 1,
             },
           ]}
         >
           <Image
-            source={require('../../assets/images/buttons/arrow-left.png')}
+            source={require("../../assets/images/buttons/arrow-left.png")}
             style={styles.arrowImage}
             resizeMode="contain"
           />
@@ -473,9 +380,7 @@ export default function LevelsScreen() {
 
         <Pressable
           onPress={handleNext}
-          disabled={
-            currentLevel === 5
-          }
+          disabled={currentLevel === 5}
           style={[
             styles.arrowButton,
             styles.arrowRight,
@@ -483,42 +388,37 @@ export default function LevelsScreen() {
               width: arrowSize,
               height: arrowSize,
 
-              opacity:
-                currentLevel === 5
-                  ? 0.4
-                  : 1,
+              opacity: currentLevel === 5 ? 0.4 : 1,
             },
           ]}
         >
           <Image
-            source={require('../../assets/images/buttons/arrow-right.png')}
+            source={require("../../assets/images/buttons/arrow-right.png")}
             style={styles.arrowImage}
             resizeMode="contain"
           />
         </Pressable>
-
       </View>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-
   // =========================
   // MAIN
   // =========================
 
   container: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 
   overlay: {
     flex: 1,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   // =========================
@@ -528,17 +428,17 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
 
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   loadingText: {
     marginTop: 12,
 
-    color: '#FFFFFF',
+    color: "#FFFFFF",
 
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 
   // =========================
@@ -546,14 +446,14 @@ const styles = StyleSheet.create({
   // =========================
 
   topButton: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 20,
 
     zIndex: 10,
 
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   backButton: {
@@ -565,8 +465,8 @@ const styles = StyleSheet.create({
   },
 
   topButtonImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 
   // =========================
@@ -574,25 +474,24 @@ const styles = StyleSheet.create({
   // =========================
 
   pointsContainer: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 20,
 
     zIndex: 15,
 
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
 
-    flexDirection: 'row',
+    flexDirection: "row",
 
     borderRadius: 28,
 
-    backgroundColor:
-      'rgba(255, 255, 255, 0.95)',
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
 
     paddingHorizontal: 10,
 
-    shadowColor: '#000',
+    shadowColor: "#000",
 
     shadowOffset: {
       width: 0,
@@ -611,21 +510,21 @@ const styles = StyleSheet.create({
   },
 
   pointsTextContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
+    flexDirection: "row",
+    alignItems: "baseline",
   },
 
   pointsValue: {
-    color: '#5A3A1A',
-    fontWeight: '900',
+    color: "#5A3A1A",
+    fontWeight: "900",
   },
 
   pointsLabel: {
     marginLeft: 3,
 
-    color: '#8B6B45',
+    color: "#8B6B45",
 
-    fontWeight: '800',
+    fontWeight: "800",
   },
 
   // =========================
@@ -633,13 +532,13 @@ const styles = StyleSheet.create({
   // =========================
 
   levelImageWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   levelImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 
   // =========================
@@ -647,14 +546,14 @@ const styles = StyleSheet.create({
   // =========================
 
   arrowButton: {
-    position: 'absolute',
+    position: "absolute",
 
-    top: '39%',
+    top: "39%",
 
     zIndex: 10,
 
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   arrowLeft: {
@@ -666,7 +565,7 @@ const styles = StyleSheet.create({
   },
 
   arrowImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });
