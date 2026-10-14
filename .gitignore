@@ -51,3 +51,5 @@ eas-install-log.txt
 
 eas-build-latest.json
 eas-install-log-new.txt
+
+supabase/.temp/

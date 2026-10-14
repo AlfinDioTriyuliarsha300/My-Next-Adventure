@@ -501,6 +501,7 @@ Deno.serve(async (req: Request) => {
           grade,
           class_name: className,
           must_change_password: true,
+          temporary_password: temporaryPassword,
           created_by: user.id,
         });
 

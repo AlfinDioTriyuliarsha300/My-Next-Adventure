@@ -139,6 +139,7 @@ export async function getTeacherStudents() {
         grade,
         class_name,
         must_change_password,
+        temporary_password,
         created_at
         `
       )
@@ -811,4 +812,71 @@ export async function resetStudentPassword(
   }
 
   return data;
+}
+
+// =========================
+// STUDENT CHANGE PASSWORD
+// =========================
+
+export async function changeStudentPassword(
+  newPassword: string
+) {
+  const password = newPassword.trim();
+
+  if (!password) {
+    throw new Error(
+      'Password baru wajib diisi.'
+    );
+  }
+
+  if (password.length < 6) {
+    throw new Error(
+      'Password baru minimal 6 karakter.'
+    );
+  }
+
+  // =========================
+  // UPDATE SUPABASE AUTH PASSWORD
+  // =========================
+
+  const {
+    data: authData,
+    error: authError,
+  } = await supabase.auth.updateUser({
+    password,
+  });
+
+  if (authError) {
+    throw authError;
+  }
+
+  if (!authData.user) {
+    throw new Error(
+      'User tidak ditemukan.'
+    );
+  }
+
+  // =========================
+  // UPDATE PROFILE
+  // =========================
+
+  const {
+    error: profileError,
+  } = await supabase
+    .from('profiles')
+    .update({
+      must_change_password: false,
+      temporary_password: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', authData.user.id);
+
+  if (profileError) {
+    throw profileError;
+  }
+
+  return {
+    success: true,
+    user: authData.user,
+  };
 }

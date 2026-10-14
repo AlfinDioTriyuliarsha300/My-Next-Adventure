@@ -411,14 +411,15 @@ Deno.serve(async (req: Request) => {
      */
 
     const {
-      error: updateProfileError,
-    } = await adminClient
-      .from("profiles")
-      .update({
-        must_change_password: true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", studentProfile.id);
+  error: updateProfileError,
+  } = await adminClient
+    .from("profiles")
+    .update({
+      must_change_password: true,
+      temporary_password: temporaryPassword,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", studentProfile.id);
 
     if (updateProfileError) {
       console.error(
