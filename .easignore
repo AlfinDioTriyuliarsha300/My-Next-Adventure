@@ -1,0 +1,32 @@
+# Local/generated Expo files
+.expo/
+.expo-static/
+dist/
+web-build/
+
+# Native generated folders
+android/
+ios/
+
+# Logs and debug files
+*.log
+android-log.txt
+full-log.txt
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# IDE / AI assistant files
+.claude/
+.vscode/
+
+# Backup source
+src/app-backup/
+
+# EAS debug files
+eas-build*.json
+eas-install-log*.txt
+build-detail.json
+eas-inspect/

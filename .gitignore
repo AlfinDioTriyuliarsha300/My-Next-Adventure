@@ -44,3 +44,10 @@ example
 /ios
 /android
 
+
+build-detail.json
+eas-build.json
+eas-install-log.txt
+
+eas-build-latest.json
+eas-install-log-new.txt
