@@ -76,7 +76,7 @@ export default function ChangePasswordScreen() {
 
       Alert.alert(
         'Password Berhasil Diubah',
-        'Password kamu berhasil diperbarui. Sekarang kamu bisa masuk ke Savana Quest.',
+        'Password kamu berhasil diperbarui. Sekarang kamu bisa masuk ke MY NEXT ADVENTURE.',
         [
           {
             text: 'Mulai',

@@ -226,7 +226,7 @@ export default function RegisterScreen() {
       showPopup(
         'success',
         'Registrasi Berhasil!',
-        `Selamat datang di Savana Quest, ${cleanName}. Akun Guru kamu berhasil dibuat.`,
+        `Selamat datang di MY NEXT ADVENTURE, ${cleanName}. Akun Guru kamu berhasil dibuat.`,
         'dashboard'
       );
     } catch (error: any) {
@@ -311,7 +311,7 @@ export default function RegisterScreen() {
             <Text style={styles.subtitle}>
               Create a teacher account to
               manage{'\n'}
-              students in Savana Quest.
+              students in MY NEXT ADVENTURE.
             </Text>
 
             <View style={styles.form}>

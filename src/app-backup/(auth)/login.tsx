@@ -52,7 +52,7 @@
 
 //   return (
 //     <View style={styles.container}>
-//       <Text style={styles.logo}>SAVANA QUEST</Text>
+//       <Text style={styles.logo}>MY NEXT ADVENTURE</Text>
 
 //       <Text style={styles.title}>
 //         Welcome Explorer
@@ -159,7 +159,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function LoginScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>SAVANA QUEST</Text>
+      <Text style={styles.title}>MY NEXT ADVENTURE</Text>
       <Text style={styles.subtitle}>Login Test</Text>
     </View>
   );

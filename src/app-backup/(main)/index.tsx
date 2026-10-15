@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function MainScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Savana Quest</Text>
+      <Text style={styles.title}>MY NEXT ADVENTURE</Text>
 
       <Text style={styles.subtitle}>
         Welcome to your next adventure!

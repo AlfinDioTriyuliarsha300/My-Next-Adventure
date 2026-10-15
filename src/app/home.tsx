@@ -4,7 +4,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
-        SAVANA QUEST
+        MY NEXT ADVENTURE
       </Text>
 
       <Text style={styles.subtitle}>

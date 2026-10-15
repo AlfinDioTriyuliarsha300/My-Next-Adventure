@@ -571,7 +571,7 @@ export default function TeacherScreen() {
       >
 
         <Text style={styles.badge}>
-          SAVANA QUEST
+          MY NEXT ADVENTURE
         </Text>
 
         <Text style={styles.title}>
