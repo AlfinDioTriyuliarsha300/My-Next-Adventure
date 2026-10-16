@@ -1543,6 +1543,7 @@ export default function TeacherScreen() {
   );
 }
 
+// ini CSS
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

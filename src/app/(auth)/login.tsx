@@ -276,16 +276,12 @@ export default function LoginScreen() {
           },
         });
       } else {
-        if (profile.must_change_password) {
-          router.replace('./change-password');
-        } else {
-          router.replace({
-            pathname: '/post-login',
-            params: {
-              role: 'student',
-            },
-          });
-        }
+        router.replace({
+          pathname: '/post-login',
+          params: {
+            role: 'student',
+          },
+        });
       }
       
     } catch (error: any) {
