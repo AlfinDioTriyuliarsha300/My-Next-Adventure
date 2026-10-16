@@ -37,6 +37,7 @@ type Student = {
   grade: number | null;
   class_name: string | null;
   must_change_password: boolean;
+  temporary_password: string | null;
   created_at: string;
 };
 
@@ -392,7 +393,9 @@ export default function TeacherScreen() {
     try {
       setDetailLoading(true);
 
-      setResetPasswordResult(null);
+      setResetPasswordResult(
+        student.temporary_password
+      );
 
       setDetailVisible(true);
 
@@ -1441,7 +1444,6 @@ export default function TeacherScreen() {
                 )}
 
                 {/* PASSWORD */}
-
                 <View
                   style={
                     styles.passwordCard
@@ -1460,14 +1462,13 @@ export default function TeacherScreen() {
                       styles.passwordDescription
                     }
                   >
-                    Password lama tidak dapat
-                    ditampilkan. Jika siswa
-                    lupa password, guru dapat
-                    membuat password sementara
-                    baru.
+                    Password yang sedang aktif untuk
+                    akun siswa ini. Guru dapat melihat
+                    password ini atau membuat password
+                    baru jika diperlukan.
                   </Text>
 
-                  {resetPasswordResult && (
+                  {resetPasswordResult ? (
                     <View
                       style={
                         styles.newPasswordBox
@@ -1478,7 +1479,7 @@ export default function TeacherScreen() {
                           styles.newPasswordLabel
                         }
                       >
-                        PASSWORD BARU
+                        PASSWORD AKTIF
                       </Text>
 
                       <Text
@@ -1486,9 +1487,7 @@ export default function TeacherScreen() {
                           styles.newPasswordValue
                         }
                       >
-                        {
-                          resetPasswordResult
-                        }
+                        {resetPasswordResult}
                       </Text>
 
                       <Text
@@ -1496,10 +1495,33 @@ export default function TeacherScreen() {
                           styles.newPasswordInfo
                         }
                       >
-                        Berikan password ini
-                        kepada siswa. Siswa
-                        akan diminta menggantinya
-                        setelah login.
+                        Gunakan password ini untuk
+                        login siswa.
+                      </Text>
+                    </View>
+                  ) : (
+                    <View
+                      style={
+                        styles.newPasswordBox
+                      }
+                    >
+                      <Text
+                        style={
+                          styles.newPasswordLabel
+                        }
+                      >
+                        PASSWORD BELUM TERSEDIA
+                      </Text>
+
+                      <Text
+                        style={
+                          styles.newPasswordInfo
+                        }
+                      >
+                        Password siswa ini belum
+                        tersimpan. Gunakan Reset
+                        Password Siswa untuk membuat
+                        password baru.
                       </Text>
                     </View>
                   )}
