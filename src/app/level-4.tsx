@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import {
     ActivityIndicator,
     Alert,
+    Animated,
     Image,
     ImageBackground,
     Pressable,
@@ -13,7 +14,7 @@ import {
     useWindowDimensions,
 } from "react-native";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { saveLevelResult } from "../services/auth/authService";
 
@@ -25,73 +26,93 @@ type Question = {
 };
 
 const QUESTIONS: Question[] = [
-  // LISTENING
+  // A. LISTENING
   {
     id: "q1",
-    question: "Which animal is the tallest?",
-    options: ["🦒 Giraffe", "🦌 Deer", "🐇 Rabbit", "🐁 Mouse"],
-    answer: "🦒 Giraffe",
+    question:
+      "The giraffe is taller than the deer, but the rabbit is the shortest.\n\nWhich animal is the shortest?",
+    options: ["Giraffe", "Deer", "Rabbit", "Elephant"],
+    answer: "Rabbit",
   },
   {
     id: "q2",
-    question: "An airplane is ___ transportation.",
-    options: ["Faster than", "The biggest", "The fastest", "Fast"],
-    answer: "The fastest",
+    question:
+      'Listen to the story!\n\n"There are three bags. The red bag is expensive. The blue bag is more expensive than the red bag. The green bag is the most expensive of all."\n\nWhich bag is the most expensive?',
+    options: [
+      "The red bag",
+      "The blue bag",
+      "The green bag",
+      "All bags have the same price.",
+    ],
+    answer: "The green bag",
   },
 
-  // SPEAKING
+  // B. SPEAKING
   {
     id: "q3",
     question:
-      "Look at these animals: 🦒 🦌 🐇.\n\nChoose the correct sentence!",
+      "Look at these animals: 🐘 and 🐁.\n\nChoose the sentence that correctly describes both animals.",
     options: [
-      "The giraffe is taller than the deer.",
-      "The giraffe is the tallest.",
-      "The giraffe is as tall as the rabbit.",
-      "The giraffe is tall than the deer.",
+      "The elephant is big, but the mouse is small.",
+      "The elephant is biggerest than the mouse.",
+      "The elephant is the small.",
+      "The mouse is more big than the elephant.",
     ],
-    answer: "The giraffe is the tallest.",
+    answer: "The elephant is big, but the mouse is small.",
   },
   {
     id: "q4",
     question: "Choose the correct sentence!",
     options: [
-      "Satay is the most delicious food.",
-      "Satay is more delicious food.",
-      "Satay is the deliciousest food.",
-      "Satay is most delicious than food.",
+      "My sister is young than me.",
+      "My sister is the younger than me.",
+      "My sister is more younger than me.",
+      "My sister is younger than me, but I am not the youngest in my family.",
     ],
-    answer: "Satay is the most delicious food.",
+    answer:
+      "My sister is younger than me, but I am not the youngest in my family.",
   },
 
-  // READING
+  // C. READING
   {
     id: "q5",
-    question: "Among the three animals, the giraffe is ___.",
-    options: ["Taller than", "Tall", "The tallest", "As tall as"],
-    answer: "The tallest",
+    question:
+      'Read the text below!\n\n"Danny is as tall as Jack. Sultan is taller than Jack. Fatih is the tallest of all."\n\nWhich sentence uses the Superlative Degree?',
+    options: [
+      "Danny is as tall as Jack.",
+      "Sultan is taller than Jack.",
+      "Fatih is the tallest of all.",
+      "Danny is taller than Fatih.",
+    ],
+    answer: "Fatih is the tallest of all.",
   },
   {
     id: "q6",
     question:
-      "Read the text below!\n\nRani got 85.\nSinta got 95.\nDoni got 98.\n\nWho got the highest score?",
+      "Read the text below!\n\nRani got 85.\nSinta got 90, which is better than Rani's score.\nDoni got 95, the best score of all three.\n\nWho got the best score?",
     options: ["Rani", "Sinta", "Doni", "They got the same score."],
     answer: "Doni",
   },
 
-  // WRITING
+  // D. WRITING
   {
     id: "q7",
-    question: 'Complete the sentence!\n"The mouse is the ___." (small)',
-    options: ["Smaller", "Smallest", "Small", "More small"],
-    answer: "Smallest",
+    question:
+      "Arrange these words into a correct sentence!\n\nThe – giraffe – is – taller – than – the – deer",
+    options: [
+      "The giraffe taller is than the deer.",
+      "The giraffe is taller than the deer.",
+      "The giraffe is the taller than deer.",
+      "The giraffe is more taller than the deer.",
+    ],
+    answer: "The giraffe is taller than the deer.",
   },
   {
     id: "q8",
     question:
-      'Complete the sentence!\n"His score is the ___ in the class." (bad)',
-    options: ["Bad", "Worse", "More bad", "Worst"],
-    answer: "Worst",
+      'Complete the sentence!\n\n"Among all my friends, Doni\'s score is the ___." (good)',
+    options: ["Good", "Better", "Best", "More good"],
+    answer: "Best",
   },
 ];
 
@@ -125,6 +146,44 @@ export default function LevelTwoScreen() {
     pointsEarned: number;
     passed: boolean;
   } | null>(null);
+
+  const headerAnimation = useRef(new Animated.Value(0)).current;
+
+  const cardAnimations = useRef(
+    Array.from({ length: 5 }, () => new Animated.Value(0)),
+  ).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(headerAnimation, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.stagger(
+        150,
+        cardAnimations.map((animation) =>
+          Animated.timing(animation, {
+            toValue: 1,
+            duration: 450,
+            useNativeDriver: true,
+          }),
+        ),
+      ),
+    ]).start();
+  }, [headerAnimation, cardAnimations]);
+
+  const getEntranceStyle = (animation: Animated.Value) => ({
+    opacity: animation,
+    transform: [
+      {
+        translateY: animation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [25, 0],
+        }),
+      },
+    ],
+  });
 
   /**
    * =====================================================
@@ -218,7 +277,7 @@ export default function LevelTwoScreen() {
       const passed = score >= PASSING_SCORE;
 
       await saveLevelResult({
-        levelNumber: 3,
+        levelNumber: 4,
         score,
         totalQuestions: QUESTIONS.length,
         correctAnswers,
@@ -235,7 +294,7 @@ export default function LevelTwoScreen() {
 
       setPhase("result");
     } catch (error) {
-      console.error("Save Level 3 result error:", error);
+      console.error("Save Level 4 result error:", error);
 
       Alert.alert(
         "Gagal Menyimpan",
@@ -267,13 +326,61 @@ export default function LevelTwoScreen() {
    */
 
   if (phase === "material") {
+    const sections = [
+      {
+        title: "1. Positive Degree 🌱",
+        description:
+          "Digunakan untuk menjelaskan sifat sesuatu atau membandingkan dua hal yang sama.",
+        formula: "As + adjective + as",
+        examples: [
+          {
+            sentence: "Danny is as tall as Jack.",
+            meaning: "Danny sama tinggi dengan Jack.",
+          },
+        ],
+      },
+      {
+        title: "2. Comparative Degree ⚖️",
+        description:
+          "Digunakan untuk membandingkan dua orang, benda, atau hewan.",
+        formula:
+          "Kata sifat pendek: Adjective + -er + than\nKata sifat panjang: More + adjective + than",
+        examples: [
+          {
+            sentence: "Sultan is taller than Jack.",
+            meaning: "Sultan lebih tinggi daripada Jack.",
+          },
+          {
+            sentence: "Satay is more delicious than burger.",
+            meaning: "Sate lebih lezat daripada burger.",
+          },
+        ],
+      },
+      {
+        title: "3. Superlative Degree 🏆",
+        description:
+          "Digunakan untuk menunjukkan sesuatu yang paling dibandingkan dengan tiga hal atau lebih.",
+        formula:
+          "Kata sifat pendek: The + adjective + -est\nKata sifat panjang: The most + adjective",
+        examples: [
+          {
+            sentence: "Fatih is the tallest boy.",
+            meaning: "Fatih adalah anak laki-laki yang paling tinggi.",
+          },
+          {
+            sentence: "Satay is the most delicious food.",
+            meaning: "Sate adalah makanan yang paling lezat.",
+          },
+        ],
+      },
+    ];
+
     return (
       <ImageBackground
         source={backgroundImage}
         style={styles.background}
         resizeMode="cover"
       >
-        {/* BACK BUTTON */}
         <Pressable
           onPress={handleBack}
           style={({ pressed }) => [
@@ -297,216 +404,97 @@ export default function LevelTwoScreen() {
           showsVerticalScrollIndicator={false}
           bounces={false}
         >
-          {/* HEADER */}
-          <View style={styles.header}>
-            <Text style={styles.levelLabel}>LEVEL 3</Text>
-            <Text style={styles.title}>Superlative Degree</Text>
-            <Text style={styles.subtitle}>Let's Find the Most!</Text>
-          </View>
-
-          {/* CARD 1: DEFINITION */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>What Is Superlative Degree?</Text>
-
-            <Text style={styles.description}>
-              <Text style={styles.bold}>Superlative Degree</Text> digunakan
-              untuk menunjukkan sesuatu yang paling dibandingkan dengan tiga hal
-              atau lebih.
+          {/* ANIMATED HEADER */}
+          <Animated.View
+            style={[styles.header, getEntranceStyle(headerAnimation)]}
+          >
+            <Text style={styles.levelLabel}>LEVEL 4</Text>
+            <Text style={styles.title}>Mix It Up! 🎲</Text>
+            <Text style={styles.subtitle}>
+              Positive, Comparative, and Superlative Degree
             </Text>
+          </Animated.View>
 
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                "The elephant is the biggest."
-              </Text>
-              <Text style={styles.translation}>
-                Gajah adalah yang paling besar.
-              </Text>
-            </View>
-          </View>
-
-          {/* CARD 2: SHORT ADJECTIVES */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>1. Short Adjectives</Text>
-
+          {/* INTRODUCTION */}
+          <Animated.View
+            style={[styles.card, getEntranceStyle(cardAnimations[0])]}
+          >
+            <Text style={styles.cardTitle}>Let's Learn Together! ✨</Text>
             <Text style={styles.description}>
-              Kata sifat pendek dengan 1–2 suku kata biasanya menggunakan
-              akhiran -est dan kata the di depannya.
+              Pada level ini, kita akan belajar menggunakan tiga jenis kata
+              sifat untuk menjelaskan dan membandingkan sesuatu.
             </Text>
+          </Animated.View>
 
-            <View style={styles.formulaBox}>
-              <Text style={styles.formulaGreen}>The + adjective + -est</Text>
-            </View>
+          {/* POSITIVE, COMPARATIVE, SUPERLATIVE */}
+          {sections.map((section, index) => (
+            <Animated.View
+              key={section.title}
+              style={[styles.card, getEntranceStyle(cardAnimations[index + 1])]}
+            >
+              <Text style={styles.cardTitle}>{section.title}</Text>
 
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                Tall → <Text style={styles.orangeText}>The tallest</Text>
-              </Text>
-              <Text style={styles.translation}>Paling tinggi</Text>
-            </View>
+              <Text style={styles.description}>{section.description}</Text>
 
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                Fast → <Text style={styles.orangeText}>The fastest</Text>
-              </Text>
-              <Text style={styles.translation}>Paling cepat</Text>
-            </View>
-
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                Big → <Text style={styles.orangeText}>The biggest</Text>
-              </Text>
-              <Text style={styles.translation}>Paling besar</Text>
-            </View>
-          </View>
-
-          {/* CARD 3: LONG ADJECTIVES */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>2. Long Adjectives</Text>
-
-            <Text style={styles.description}>
-              Kata sifat panjang dengan 3 suku kata atau lebih menggunakan the
-              most sebelum kata sifat.
-            </Text>
-
-            <View style={styles.formulaBox}>
-              <Text style={styles.formulaBlue}>The most + adjective</Text>
-            </View>
-
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                Delicious →{" "}
-                <Text style={styles.orangeText}>The most delicious</Text>
-              </Text>
-              <Text style={styles.translation}>Paling lezat</Text>
-            </View>
-
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                Beautiful →{" "}
-                <Text style={styles.orangeText}>The most beautiful</Text>
-              </Text>
-              <Text style={styles.translation}>Paling cantik/indah</Text>
-            </View>
-          </View>
-
-          {/* CARD 4: EXAMPLE SENTENCES */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>3. Example Sentences</Text>
-
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                "The elephant is{" "}
-                <Text style={styles.orangeText}>the biggest</Text>."
-              </Text>
-              <Text style={styles.translation}>
-                Gajah adalah yang paling besar.
-              </Text>
-            </View>
-
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                "The airplane is{" "}
-                <Text style={styles.orangeText}>the fastest</Text>{" "}
-                transportation."
-              </Text>
-              <Text style={styles.translation}>
-                Pesawat adalah transportasi yang paling cepat.
-              </Text>
-            </View>
-
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>
-                "Satay is{" "}
-                <Text style={styles.orangeText}>the most delicious</Text> food."
-              </Text>
-              <Text style={styles.translation}>
-                Sate adalah makanan yang paling lezat.
-              </Text>
-            </View>
-          </View>
-
-          {/* CARD 5: IRREGULAR ADJECTIVES */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>4. Special Adjectives</Text>
-
-            <Text style={styles.description}>
-              Beberapa kata sifat memiliki bentuk superlative khusus yang
-              berbeda dari rumus biasa.
-            </Text>
-
-            {[
-              { base: "Good", result: "The best", meaning: "Paling baik" },
-              { base: "Bad", result: "The worst", meaning: "Paling buruk" },
-              {
-                base: "Little",
-                result: "The least",
-                meaning: "Paling sedikit",
-              },
-              {
-                base: "Much/Many",
-                result: "The most",
-                meaning: "Paling banyak",
-              },
-              {
-                base: "Far",
-                result: "The furthest/farthest",
-                meaning: "Paling jauh",
-              },
-            ].map((item) => (
-              <View key={item.base} style={styles.exampleBox}>
-                <Text style={styles.exampleText}>
-                  {item.base} →{" "}
-                  <Text style={styles.orangeText}>{item.result}</Text>
-                </Text>
-                <Text style={styles.translation}>{item.meaning}</Text>
+              <View style={styles.formulaBox}>
+                <Text style={styles.formulaGreen}>{section.formula}</Text>
               </View>
-            ))}
-          </View>
 
-          {/* CARD 6: REMEMBER */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>5. Remember This!</Text>
+              {section.examples.map((example) => (
+                <View key={example.sentence} style={styles.exampleBox}>
+                  <Text style={styles.exampleText}>{example.sentence}</Text>
+                  <Text style={styles.translation}>{example.meaning}</Text>
+                </View>
+              ))}
+            </Animated.View>
+          ))}
 
-            <View style={styles.explanationBox}>
-              <Text style={styles.explanationText}>
-                ⭐ Kata sifat pendek biasanya ditambah -est.
+          {/* REMEMBER THE DIFFERENCE */}
+          <Animated.View
+            style={[styles.card, getEntranceStyle(cardAnimations[4])]}
+          >
+            <Text style={styles.cardTitle}>4. Ingat Perbedaannya! 💡</Text>
+
+            <View style={styles.exampleBox}>
+              <Text style={styles.exampleText}>🌱 Positive = Sama</Text>
+              <Text style={styles.translation}>Danny is as tall as Jack.</Text>
+            </View>
+
+            <View style={styles.exampleBox}>
+              <Text style={styles.exampleText}>⚖️ Comparative = Lebih</Text>
+              <Text style={styles.translation}>
+                Sultan is taller than Jack.
               </Text>
             </View>
 
-            <View style={styles.explanationBox}>
-              <Text style={styles.explanationText}>
-                ⭐ Kata sifat panjang menggunakan the most.
-              </Text>
-            </View>
-
-            <View style={styles.explanationBox}>
-              <Text style={styles.explanationText}>
-                ⭐ Gunakan the sebelum kata sifat superlative.
-              </Text>
+            <View style={styles.exampleBox}>
+              <Text style={styles.exampleText}>🏆 Superlative = Paling</Text>
+              <Text style={styles.translation}>Fatih is the tallest boy.</Text>
             </View>
 
             <View style={styles.rememberBox}>
-              <Text style={styles.rememberTitle}>Quick Reminder!</Text>
-
+              <Text style={styles.rememberTitle}>Yuk, Ingat! ⭐</Text>
               <Text style={styles.rememberText}>
-                Tall → The tallest = paling tinggi{"\n"}
-                Fast → The fastest = paling cepat{"\n"}
-                Big → The biggest = paling besar{"\n"}
-                Delicious → The most delicious = paling lezat{"\n"}
-                Beautiful → The most beautiful = paling cantik/indah
+                As ... as = sama{"\n"}
+                -er than / more ... than = lebih{"\n"}
+                The ... -est / the most ... = paling
               </Text>
             </View>
 
-            <View style={styles.exampleBox}>
-              <Text style={styles.exampleText}>❌ The most fastest</Text>
-              <Text style={styles.exampleText}>✅ The fastest</Text>
-              <Text style={styles.exampleText}>✅ The most delicious</Text>
-            </View>
-          </View>
+            <Text style={[styles.description, { marginTop: 10 }]}>
+              Ketiganya membantu kita menjelaskan sifat dan membandingkan orang,
+              hewan, atau benda dalam bahasa Inggris.
+            </Text>
+          </Animated.View>
 
           {/* START PRACTICE */}
           <Pressable
-            onPress={() => setPhase("quiz")}
+            onPress={() => {
+              setCurrentQuestion(0);
+              setSelectedAnswer(null);
+              setAnswers({});
+              setPhase("quiz");
+            }}
             style={({ pressed }) => [
               styles.startButton,
               {
@@ -514,10 +502,9 @@ export default function LevelTwoScreen() {
               },
             ]}
           >
-            <Text style={styles.startButtonText}>Start Practice</Text>
+            <Text style={styles.startButtonText}>Start Practice 🚀</Text>
           </Pressable>
 
-          {/* BOTTOM SPACE */}
           <View style={styles.bottomSpace} />
         </ScrollView>
       </ImageBackground>
@@ -584,7 +571,7 @@ export default function LevelTwoScreen() {
         >
           {/* QUIZ HEADER */}
           <View style={styles.header}>
-            <Text style={styles.levelLabel}>LEVEL 3</Text>
+            <Text style={styles.levelLabel}>LEVEL 4</Text>
 
             <Text style={styles.quizTitle}>Let's Practice!</Text>
 
@@ -781,10 +768,10 @@ export default function LevelTwoScreen() {
           {/* STATUS */}
           {passed ? (
             <View style={styles.unlockBox}>
-              <Text style={styles.unlockTitle}>🎉 Level 3 Completed!</Text>
+              <Text style={styles.unlockTitle}>🎉 Level 4 Completed!</Text>
 
               <Text style={styles.unlockText}>
-                Congratulations! You have mastered Level 3 and can continue your
+                Congratulations! You have mastered Level 4 and can continue your
                 adventure.
               </Text>
             </View>

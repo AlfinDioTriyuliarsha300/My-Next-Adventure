@@ -207,6 +207,11 @@ export default function LevelsScreen() {
       return;
     }
 
+    if (currentLevel === 5) {
+      router.push("/level-5");
+      return;
+    }
+
     Alert.alert(`Level ${currentLevel}`, "Materi level ini akan segera hadir.");
   }
 
