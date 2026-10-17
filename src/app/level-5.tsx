@@ -8,7 +8,7 @@ import {
     StyleSheet,
     Text,
     View,
-    useWindowDimensions
+    useWindowDimensions,
 } from "react-native";
 
 type Phase = "intro" | "reflection" | "quiz" | "result";
