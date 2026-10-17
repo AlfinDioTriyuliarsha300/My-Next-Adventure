@@ -197,6 +197,16 @@ export default function LevelsScreen() {
       return;
     }
 
+    if (currentLevel === 3) {
+      router.push("/level-3");
+      return;
+    }
+
+    if (currentLevel === 4) {
+      router.push("/level-4");
+      return;
+    }
+
     Alert.alert(`Level ${currentLevel}`, "Materi level ini akan segera hadir.");
   }
 
