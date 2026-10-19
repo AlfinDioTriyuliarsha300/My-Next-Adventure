@@ -1,44 +1,61 @@
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   ImageBackground,
   Pressable,
   SafeAreaView,
-  StyleSheet,
   ScrollView,
+  StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { router } from 'expo-router';
 
-import { listeningLevel1 } from '../data/levels/level-1';
-import SkillHeader from '../components/learning/SkillHeader';
-import QuestionCard from '../components/learning/QuestionCard';
-import AnswerOptions from '../components/learning/AnswerOptions';
-import FeedbackSheet from '../components/learning/FeedbackSheet';
-import StarProgress from '../components/learning/StarProgress';
+import AnswerOptions from '../../components/learning/AnswerOptions';
+import FeedbackSheet from '../../components/learning/FeedbackSheet';
+import QuestionCard from '../../components/learning/QuestionCard';
+import StarProgress from '../../components/learning/StarProgress';
+import { listeningLevel2 } from '../../data/levels/level-2';
 
 import {
   ambilProgress,
-  tandaiSoalSelesai,
   hitungBintang,
-} from '../services/auth/learningProgress';
+  tandaiSoalSelesai,
+} from '../../services/auth/learningProgress';
 
-const LEVEL = 1;
-const questions = listeningLevel1.questions;
+import SkillHeader from '@/components/learning/SkillHeader';
+
+const LEVEL = 2;
+const questions = listeningLevel2.questions;
 
 export default function ListeningScreen() {
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [completedQuestions, setCompletedQuestions] = useState<string[]>([]);
-  const [feedbackVisible, setFeedbackVisible] = useState(false);
-  const [lastAnswerCorrect, setLastAnswerCorrect] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedAnswer, setSelectedAnswer] =
+    useState<string | null>(null);
 
-  const currentQuestion = questions[questionIndex];
+  const [isSubmitted, setIsSubmitted] =
+    useState(false);
+
+  const [completedQuestions, setCompletedQuestions] =
+    useState<string[]>([]);
+
+  const [feedbackVisible, setFeedbackVisible] =
+    useState(false);
+
+  const [lastAnswerCorrect, setLastAnswerCorrect] =
+    useState(false);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [errorMessage, setErrorMessage] =
+    useState<string | null>(null);
+
+  const currentQuestion =
+    questions[questionIndex];
 
   const earnedStars = hitungBintang(
     { completedQuestions },
@@ -52,13 +69,21 @@ export default function ListeningScreen() {
       try {
         setErrorMessage(null);
 
-        const progress = await ambilProgress(LEVEL, 'listening');
+        const progress = await ambilProgress(
+          LEVEL,
+          'listening',
+        );
 
         if (active) {
-          setCompletedQuestions(progress.completedQuestions);
+          setCompletedQuestions(
+            progress.completedQuestions,
+          );
         }
       } catch (error) {
-        console.error('Failed to load Listening progress:', error);
+        console.error(
+          'Failed to load Level 2 Listening progress:',
+          error,
+        );
 
         if (active) {
           setErrorMessage(
@@ -66,7 +91,9 @@ export default function ListeningScreen() {
           );
         }
       } finally {
-        if (active) setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -78,15 +105,28 @@ export default function ListeningScreen() {
   }, []);
 
   async function handleSubmit() {
-    if (!selectedAnswer || isSubmitted || saving) return;
+    if (
+      !selectedAnswer ||
+      isSubmitted ||
+      saving
+    ) {
+      return;
+    }
 
-    const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+    const isCorrect =
+      selectedAnswer ===
+      currentQuestion.correctAnswer;
 
     setIsSubmitted(true);
     setLastAnswerCorrect(isCorrect);
     setFeedbackVisible(true);
 
-    if (!isCorrect || completedQuestions.includes(currentQuestion.id)) {
+    if (
+      !isCorrect ||
+      completedQuestions.includes(
+        currentQuestion.id,
+      )
+    ) {
       return;
     }
 
@@ -100,13 +140,20 @@ export default function ListeningScreen() {
         currentQuestion.id,
       );
 
-      setCompletedQuestions((previous) =>
-        previous.includes(currentQuestion.id)
-          ? previous
-          : [...previous, currentQuestion.id],
+      setCompletedQuestions(
+        (previous) =>
+          previous.includes(currentQuestion.id)
+            ? previous
+            : [
+                ...previous,
+                currentQuestion.id,
+              ],
       );
     } catch (error) {
-      console.error('Failed to save Listening progress:', error);
+      console.error(
+        'Failed to save Level 2 Listening progress:',
+        error,
+      );
 
       setErrorMessage(
         'Your answer is correct, but progress could not be saved. Please try again.',
@@ -119,10 +166,17 @@ export default function ListeningScreen() {
   function handleNextQuestion() {
     setFeedbackVisible(false);
 
-    if (questionIndex < questions.length - 1) {
-      setQuestionIndex((previous) => previous + 1);
+    if (
+      questionIndex <
+      questions.length - 1
+    ) {
+      setQuestionIndex(
+        (previous) => previous + 1,
+      );
+
       setSelectedAnswer(null);
       setIsSubmitted(false);
+      setLastAnswerCorrect(false);
     } else {
       router.back();
     }
@@ -130,8 +184,14 @@ export default function ListeningScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2563EB" />
+      <SafeAreaView
+        style={styles.loadingContainer}
+      >
+        <ActivityIndicator
+          size="large"
+          color="#2563EB"
+        />
+
         <Text style={styles.loadingText}>
           Loading your progress...
         </Text>
@@ -141,7 +201,9 @@ export default function ListeningScreen() {
 
   return (
     <ImageBackground
-      source={require('../../assets/images/lessons/positive-degree-background.png')}
+      source={require(
+        '../../../assets/images/lessons/positive-degree-background.png',
+      )}
       style={styles.background}
       resizeMode="cover"
     >
@@ -153,13 +215,18 @@ export default function ListeningScreen() {
 
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={
+            styles.scrollContent
+          }
           showsVerticalScrollIndicator
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.progressContainer}>
+          <View
+            style={styles.progressContainer}
+          >
             <Text style={styles.progressText}>
-              Question {questionIndex + 1} of {questions.length}
+              Question {questionIndex + 1} of{' '}
+              {questions.length}
             </Text>
 
             <StarProgress
@@ -170,29 +237,49 @@ export default function ListeningScreen() {
 
           {errorMessage ? (
             <View style={styles.errorBox}>
-              <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.errorText}>
+                {errorMessage}
+              </Text>
             </View>
           ) : null}
 
           <View style={styles.content}>
             <QuestionCard
               question={currentQuestion}
-              questionNumber={questionIndex + 1}
-              totalQuestions={questions.length}
+              questionNumber={
+                questionIndex + 1
+              }
+              totalQuestions={
+                questions.length
+              }
             />
 
             <AnswerOptions
               options={currentQuestion.options}
-              selectedAnswer={selectedAnswer}
-              correctAnswer={currentQuestion.correctAnswer}
+              selectedAnswer={
+                selectedAnswer
+              }
+              correctAnswer={
+                currentQuestion.correctAnswer
+              }
               isSubmitted={isSubmitted}
-              onSelect={setSelectedAnswer}
+              onSelect={
+                setSelectedAnswer
+              }
             />
 
             {saving ? (
-              <View style={styles.savingRow}>
-                <ActivityIndicator size="small" color="#2563EB" />
-                <Text style={styles.savingText}>
+              <View
+                style={styles.savingRow}
+              >
+                <ActivityIndicator
+                  size="small"
+                  color="#2563EB"
+                />
+
+                <Text
+                  style={styles.savingText}
+                >
                   Saving progress...
                 </Text>
               </View>
@@ -201,23 +288,41 @@ export default function ListeningScreen() {
             {!isSubmitted ? (
               <Pressable
                 onPress={handleSubmit}
-                disabled={!selectedAnswer || saving}
+                disabled={
+                  !selectedAnswer ||
+                  saving
+                }
                 style={[
                   styles.actionButton,
-                  (!selectedAnswer || saving) && styles.disabledButton,
+                  (!selectedAnswer ||
+                    saving) &&
+                    styles.disabledButton,
                 ]}
               >
-                <Text style={styles.actionButtonText}>
+                <Text
+                  style={
+                    styles.actionButtonText
+                  }
+                >
                   Check Answer
                 </Text>
               </Pressable>
             ) : (
               <Pressable
-                onPress={handleNextQuestion}
-                style={styles.actionButton}
+                onPress={
+                  handleNextQuestion
+                }
+                style={
+                  styles.actionButton
+                }
               >
-                <Text style={styles.actionButtonText}>
-                  {questionIndex === questions.length - 1
+                <Text
+                  style={
+                    styles.actionButtonText
+                  }
+                >
+                  {questionIndex ===
+                  questions.length - 1
                     ? 'Finish Listening'
                     : 'Next Question'}
                 </Text>
@@ -228,13 +333,18 @@ export default function ListeningScreen() {
 
         <FeedbackSheet
           visible={feedbackVisible}
-          isCorrect={lastAnswerCorrect}
+          isCorrect={
+            lastAnswerCorrect
+          }
           message={
             lastAnswerCorrect
-              ? currentQuestion.explanation ?? 'Great job!'
+              ? currentQuestion.explanation ??
+                'Nice work practicing! Correct!'
               : 'Not quite. Listen again and try to remember the details.'
           }
-          onClose={() => setFeedbackVisible(false)}
+          onClose={() =>
+            setFeedbackVisible(false)
+          }
         />
       </SafeAreaView>
     </ImageBackground>
@@ -249,7 +359,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 22,
-    backgroundColor: 'rgba(240, 249, 255, 0.18)',
+    backgroundColor:
+      'rgba(240, 249, 255, 0.18)',
   },
 
   scrollView: {
@@ -327,7 +438,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     elevation: 3,
     shadowColor: '#1D4ED8',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
     shadowOpacity: 0.15,
     shadowRadius: 8,
   },

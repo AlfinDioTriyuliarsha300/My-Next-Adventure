@@ -188,12 +188,12 @@ export default function LevelsScreen() {
     }
 
     if (currentLevel === 1) {
-      router.push("/level-1");
+      router.push("/Level 1/level-1");
       return;
     }
 
     if (currentLevel === 2) {
-      router.push("/level-2");
+      router.push("/Level 2/level-2");
       return;
     }
 

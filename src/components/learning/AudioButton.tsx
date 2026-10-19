@@ -1,13 +1,11 @@
 
+import { Ionicons } from '@expo/vector-icons';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
-import { useEffect } from 'react';
 import {
-  ActivityIndicator,
   Pressable,
   StyleSheet,
-  Text,
+  Text
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 type AudioButtonProps = {
   audio: number;
@@ -21,11 +19,12 @@ export default function AudioButton({
   const player = useAudioPlayer(audio);
   const status = useAudioPlayerStatus(player);
 
-  useEffect(() => {
-    return () => {
-      player.pause();
-    };
-  }, [player]);
+  // ga tau karena code ini error
+  // useEffect(() => {
+  //   return () => {
+  //     player.pause();
+  //   };
+  // }, [player]);
 
   async function putarAudio() {
     try {
