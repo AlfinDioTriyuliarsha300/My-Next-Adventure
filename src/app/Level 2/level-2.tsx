@@ -1,4 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
@@ -84,7 +85,9 @@ const DAFTAR_SKILL: Skill[] = [
 // =====================================================
 
 export default function LevelTwoScreen() {
-  const [skillSelesai, setSkillSelesai] = useState<Record<SkillId, number>>({
+  const [skillSelesai, setSkillSelesai] = useState<
+    Record<SkillId, number>
+  >({
     listening: 0,
     speaking: 0,
     reading: 0,
@@ -96,6 +99,26 @@ export default function LevelTwoScreen() {
   const [reflectionVisible, setReflectionVisible] = useState(false);
 
   const [reflectionCompleted, setReflectionCompleted] = useState(false);
+
+  // =====================================================
+  // AUDIO COMPARATIVE DEGREE
+  // =====================================================
+
+  const audioPlayer = useAudioPlayer(
+    require("../../../assets/audio/level-2/listening/Comparative Degree.wav"),
+  );
+
+  const audioStatus = useAudioPlayerStatus(audioPlayer);
+
+  function toggleAudio() {
+    if (audioStatus.playing) {
+      audioPlayer.pause();
+      return;
+    }
+
+    audioPlayer.seekTo(0);
+    audioPlayer.play();
+  }
 
   // =====================================================
   // CEK APAKAH SEMUA SKILL SUDAH MINIMAL 2 BINTANG
@@ -173,7 +196,8 @@ export default function LevelTwoScreen() {
           // CEK REFLECTION
           // =================================================
 
-          const sudahReflection = await apakahReflectionSelesai(LEVEL);
+          const sudahReflection =
+            await apakahReflectionSelesai(LEVEL);
 
           if (!active) return;
 
@@ -197,7 +221,10 @@ export default function LevelTwoScreen() {
             setReflectionVisible(false);
           }
         } catch (error) {
-          console.error("Failed to load Level 2 skill progress:", error);
+          console.error(
+            "Failed to load Level 2 skill progress:",
+            error,
+          );
         } finally {
           if (active) {
             setLoadingProgress(false);
@@ -247,7 +274,8 @@ export default function LevelTwoScreen() {
     }
 
     Alert.alert(
-      DAFTAR_SKILL.find((skill) => skill.id === namaSkill)?.nama ?? namaSkill,
+      DAFTAR_SKILL.find((skill) => skill.id === namaSkill)?.nama ??
+        namaSkill,
       "Materi dan soal skill ini akan ditambahkan pada pengembangan berikutnya.",
     );
   }
@@ -256,7 +284,9 @@ export default function LevelTwoScreen() {
   // REFLECTION SELESAI
   // =====================================================
 
-  async function handleReflectionSubmit(data: ReflectionFormData) {
+  async function handleReflectionSubmit(
+    data: ReflectionFormData,
+  ) {
     try {
       await simpanReflection({
         level_number: LEVEL,
@@ -276,7 +306,10 @@ export default function LevelTwoScreen() {
         "Great job! You have completed Level 2.",
       );
     } catch (error) {
-      console.error("Failed to save Level 2 reflection:", error);
+      console.error(
+        "Failed to save Level 2 reflection:",
+        error,
+      );
 
       Alert.alert(
         "Failed to Save",
@@ -311,14 +344,15 @@ export default function LevelTwoScreen() {
       return;
     }
 
-    router.push('/Level 3/level-3');
+    router.push("/Level 3/level-3");
   }
 
   // =====================================================
   // STATUS LEVEL
   // =====================================================
 
-  const levelSelesai = semuaSkillMemenuhiSyarat && reflectionCompleted;
+  const levelSelesai =
+    semuaSkillMemenuhiSyarat && reflectionCompleted;
 
   // =====================================================
   // RENDER
@@ -330,7 +364,10 @@ export default function LevelTwoScreen() {
       style={styles.halaman}
       resizeMode="cover"
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF5E6" />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#FFF5E6"
+      />
 
       <ScrollView
         contentContainerStyle={styles.konten}
@@ -346,20 +383,29 @@ export default function LevelTwoScreen() {
             style={styles.tombolKembali}
             accessibilityLabel="Kembali ke daftar level"
           >
-            <Ionicons name="chevron-back" size={28} color="#493D30" />
+            <Ionicons
+              name="chevron-back"
+              size={28}
+              color="#493D30"
+            />
           </Pressable>
 
           <View style={styles.bilahProgres}>
             <View
               style={[
                 styles.progresTerisi,
-                levelSelesai && styles.progresTerisiSelesai,
+                levelSelesai &&
+                  styles.progresTerisiSelesai,
               ]}
             />
           </View>
 
           <View style={styles.poin}>
-            <Ionicons name="star" size={17} color="#F3B51B" />
+            <Ionicons
+              name="star"
+              size={17}
+              color="#F3B51B"
+            />
 
             <Text style={styles.teksPoin}>120</Text>
           </View>
@@ -371,12 +417,18 @@ export default function LevelTwoScreen() {
 
         <View style={styles.headerMateri}>
           <View style={styles.labelLevel}>
-            <Text style={styles.teksLabelLevel}>LEVEL {LEVEL}</Text>
+            <Text style={styles.teksLabelLevel}>
+              LEVEL {LEVEL}
+            </Text>
           </View>
 
-          <Text style={styles.judulLevel}>Level 2: Comparative Degree</Text>
+          <Text style={styles.judulLevel}>
+            Level 2: Comparative Degree
+          </Text>
 
-          <Text style={styles.deskripsiLevel}>Compare two things</Text>
+          <Text style={styles.deskripsiLevel}>
+            Compare two things
+          </Text>
         </View>
 
         {/* =================================================
@@ -385,23 +437,62 @@ export default function LevelTwoScreen() {
 
         <View style={styles.kartuMateri}>
           <View style={styles.judulKartuMateri}>
-            <Text style={styles.teksJudulMateri}>What is Comparative Degree?</Text>
+            <Text style={styles.teksJudulMateri}>
+              What is Comparative Degree?
+            </Text>
+
+            {/* =================================================
+                AUDIO BUTTON
+            ================================================== */}
+
+            <Pressable
+              onPress={toggleAudio}
+              style={({ pressed }) => [
+                styles.tombolAudio,
+                pressed && styles.tombolAudioDitekan,
+              ]}
+              accessibilityLabel={
+                audioStatus.playing
+                  ? "Stop audio"
+                  : "Play audio"
+              }
+            >
+              <Ionicons
+                name={
+                  audioStatus.playing
+                    ? "volume-high"
+                    : "volume-medium-outline"
+                }
+                size={20}
+                color="#367C4A"
+              />
+            </Pressable>
           </View>
 
           <View style={styles.barisMateri}>
             <Text style={styles.teksMateri}>
-              Comparative Degree is a form used to compare two people, things, or
-              actions to show that one has more or less of a quality than the other.
+              Comparative Degree is a form used to compare two
+              people, things, or actions to show that one has
+              more or less of a quality than the other.
             </Text>
           </View>
 
           <View style={styles.barisMateri}>
             <Text style={styles.teksMateri}>
-              <Text style={{ fontWeight: "bold" }}>1. Short Adjectives{"\n"}</Text>
-              For short adjectives, generally with one or two syllables, add
-              <Text style={{ fontWeight: "bold" }}> -er </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                1. Short Adjectives{"\n"}
+              </Text>
+              For short adjectives, generally with one or two
+              syllables, add
+              <Text style={{ fontWeight: "bold" }}>
+                {" "}
+                -er{" "}
+              </Text>
               to the adjective and use
-              <Text style={{ fontWeight: "bold" }}> than </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {" "}
+                than{" "}
+              </Text>
               to compare two things.
             </Text>
           </View>
@@ -415,11 +506,20 @@ export default function LevelTwoScreen() {
 
           <View style={styles.barisMateri}>
             <Text style={styles.teksMateri}>
-              <Text style={{ fontWeight: "bold" }}>2. Long Adjectives{"\n"}</Text>
-              For long adjectives, generally with three or more syllables, use
-              <Text style={{ fontWeight: "bold" }}> more </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                2. Long Adjectives{"\n"}
+              </Text>
+              For long adjectives, generally with three or more
+              syllables, use
+              <Text style={{ fontWeight: "bold" }}>
+                {" "}
+                more{" "}
+              </Text>
               before the adjective and
-              <Text style={{ fontWeight: "bold" }}> than </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {" "}
+                than{" "}
+              </Text>
               after it.
             </Text>
           </View>
@@ -427,25 +527,33 @@ export default function LevelTwoScreen() {
           <View style={styles.barisContoh}>
             <Text style={styles.teksMateri}>
               beautiful → more beautiful{"\n"}
-              Example: This flower is more beautiful than that flower.
+              Example: This flower is more beautiful than that
+              flower.
             </Text>
           </View>
 
           <View style={styles.catatanMateri}>
             <View style={styles.kontenCatatan}>
-              <Text style={styles.judulCatatan}>Remember This!</Text>
+              <Text style={styles.judulCatatan}>
+                Remember This!
+              </Text>
+
               <Text style={styles.teksCatatan}>
-                Use -er for short adjectives and more for long adjectives.
-                Don't forget to use than when comparing two things!
+                Use -er for short adjectives and more for long
+                adjectives. Don't forget to use than when
+                comparing two things!
               </Text>
             </View>
           </View>
 
           <View style={styles.barisMateri}>
             <Text style={styles.teksMateri}>
-              <Text style={{ fontWeight: "bold" }}>3. Adjective Changes{"\n"}</Text>
-              Some adjectives change their spelling when used in the comparative
-              form. Study these examples to use Comparative Degree correctly.
+              <Text style={{ fontWeight: "bold" }}>
+                3. Adjective Changes{"\n"}
+              </Text>
+              Some adjectives change their spelling when used
+              in the comparative form. Study these examples to
+              use Comparative Degree correctly.
             </Text>
           </View>
 
@@ -462,26 +570,36 @@ export default function LevelTwoScreen() {
 
           <View style={styles.catatanMateri}>
             <View style={styles.kontenCatatan}>
-              <Text style={styles.judulCatatan}>Important Notes</Text>
+              <Text style={styles.judulCatatan}>
+                Important Notes
+              </Text>
+
               <Text style={styles.teksCatatan}>
                 • Use than to compare two people or things.{"\n"}
                 • Short adjectives generally use -er.{"\n"}
                 • Long adjectives generally use more.{"\n"}
-                • Do not combine more with adjectives that already end in -er.
+                • Do not combine more with adjectives that
+                already end in -er.
               </Text>
             </View>
           </View>
         </View>
+
         {/* =================================================
             DAFTAR SKILL
         ================================================== */}
 
         <View style={styles.bagianSkill}>
-          <Text style={styles.judulSkill}>PRACTICE THE 4 SKILLS</Text>
+          <Text style={styles.judulSkill}>
+            PRACTICE THE 4 SKILLS
+          </Text>
 
           {loadingProgress ? (
             <View style={styles.loadingProgress}>
-              <ActivityIndicator size="small" color="#65A879" />
+              <ActivityIndicator
+                size="small"
+                color="#65A879"
+              />
 
               <Text style={styles.loadingProgressText}>
                 Loading your progress...
@@ -494,7 +612,9 @@ export default function LevelTwoScreen() {
                   key={skill.id}
                   skill={skill}
                   bintangEmas={skillSelesai[skill.id]}
-                  saatDitekan={() => bukaSkill(skill.id)}
+                  saatDitekan={() =>
+                    bukaSkill(skill.id)
+                  }
                 />
               ))}
             </View>
@@ -517,12 +637,18 @@ export default function LevelTwoScreen() {
                 />
               </View>
 
-              <View style={styles.reflectionTextContainer}>
-                <Text style={styles.reflectionTitle}>Great job!</Text>
+              <View
+                style={styles.reflectionTextContainer}
+              >
+                <Text style={styles.reflectionTitle}>
+                  Great job!
+                </Text>
 
-                <Text style={styles.reflectionDescription}>
-                  You completed the 4 skills. Complete your reflection before
-                  moving to the next level.
+                <Text
+                  style={styles.reflectionDescription}
+                >
+                  You completed the 4 skills. Complete your
+                  reflection before moving to the next level.
                 </Text>
               </View>
             </View>
@@ -551,9 +677,15 @@ export default function LevelTwoScreen() {
                 : styles.tombolLanjutNonaktif,
             ]}
           >
-            <Text style={styles.teksTombolLanjut}>Next</Text>
+            <Text style={styles.teksTombolLanjut}>
+              Next
+            </Text>
 
-            <Ionicons name="chevron-forward" size={18} color="#FFFFFF" />
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color="#FFFFFF"
+            />
           </Pressable>
         </View>
       </ScrollView>
@@ -580,7 +712,11 @@ type KartuSkillProps = {
   saatDitekan: () => void;
 };
 
-function KartuSkill({ skill, bintangEmas, saatDitekan }: KartuSkillProps) {
+function KartuSkill({
+  skill,
+  bintangEmas,
+  saatDitekan,
+}: KartuSkillProps) {
   return (
     <Pressable
       onPress={saatDitekan}
@@ -601,7 +737,9 @@ function KartuSkill({ skill, bintangEmas, saatDitekan }: KartuSkillProps) {
 
       {/* Nama skill */}
 
-      <Text style={styles.namaSkill}>{skill.nama}</Text>
+      <Text style={styles.namaSkill}>
+        {skill.nama}
+      </Text>
 
       {/* Bintang progres */}
 
@@ -609,14 +747,19 @@ function KartuSkill({ skill, bintangEmas, saatDitekan }: KartuSkillProps) {
         {Array.from({
           length: TOTAL_STARS,
         }).map((_, index) => {
-          const sudahDiperoleh = index < bintangEmas;
+          const sudahDiperoleh =
+            index < bintangEmas;
 
           return (
             <Ionicons
               key={`${skill.id}-bintang-${index}`}
               name="star"
               size={18}
-              color={sudahDiperoleh ? "#F2B51B" : "#CBD5E1"}
+              color={
+                sudahDiperoleh
+                  ? "#F2B51B"
+                  : "#CBD5E1"
+              }
             />
           );
         })}
@@ -755,9 +898,31 @@ const styles = StyleSheet.create({
   },
 
   teksJudulMateri: {
+    flex: 1,
     color: "#367C4A",
     fontSize: 15,
     fontWeight: "900",
+  },
+
+  // ===================================================
+  // AUDIO BUTTON
+  // ===================================================
+
+  tombolAudio: {
+    marginLeft: "auto",
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#D8EEDB",
+    borderWidth: 1,
+    borderColor: "#A9D3AE",
+  },
+
+  tombolAudioDitekan: {
+    backgroundColor: "#C1E3C7",
+    transform: [{ scale: 0.94 }],
   },
 
   barisMateri: {

@@ -1,6 +1,9 @@
-
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
+import {
+  useAudioPlayer,
+  useAudioPlayerStatus,
+} from "expo-audio";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -84,7 +87,9 @@ const DAFTAR_SKILL: Skill[] = [
 // =====================================================
 
 export default function LevelFourScreen() {
-  const [skillSelesai, setSkillSelesai] = useState<Record<SkillId, number>>({
+  const [skillSelesai, setSkillSelesai] = useState<
+    Record<SkillId, number>
+  >({
     listening: 0,
     speaking: 0,
     reading: 0,
@@ -96,6 +101,26 @@ export default function LevelFourScreen() {
   const [reflectionVisible, setReflectionVisible] = useState(false);
 
   const [reflectionCompleted, setReflectionCompleted] = useState(false);
+
+  // =====================================================
+  // AUDIO MATERI LEVEL 4
+  // =====================================================
+
+  const audioPlayer = useAudioPlayer(
+    require("../../../assets/audio/level-4/listening/Level 4.wav"),
+  );
+
+  const audioStatus = useAudioPlayerStatus(audioPlayer);
+
+  function toggleAudio() {
+    if (audioStatus.playing) {
+      audioPlayer.pause();
+      return;
+    }
+
+    audioPlayer.seekTo(0);
+    audioPlayer.play();
+  }
 
   // =====================================================
   // CEK APAKAH SEMUA SKILL SUDAH MINIMAL 2 BINTANG
@@ -184,7 +209,10 @@ export default function LevelFourScreen() {
             setReflectionVisible(false);
           }
         } catch (error) {
-          console.error("Failed to load Level 4 skill progress:", error);
+          console.error(
+            "Failed to load Level 4 skill progress:",
+            error,
+          );
         } finally {
           if (active) {
             setLoadingProgress(false);
@@ -234,7 +262,8 @@ export default function LevelFourScreen() {
     }
 
     Alert.alert(
-      DAFTAR_SKILL.find((skill) => skill.id === namaSkill)?.nama ?? namaSkill,
+      DAFTAR_SKILL.find((skill) => skill.id === namaSkill)?.nama ??
+        namaSkill,
       "Materi dan soal skill ini akan ditambahkan pada pengembangan berikutnya.",
     );
   }
@@ -263,7 +292,10 @@ export default function LevelFourScreen() {
         "Great job! You have completed Level 4.",
       );
     } catch (error) {
-      console.error("Failed to save Level 4 reflection:", error);
+      console.error(
+        "Failed to save Level 4 reflection:",
+        error,
+      );
 
       Alert.alert(
         "Failed to Save",
@@ -305,7 +337,8 @@ export default function LevelFourScreen() {
   // STATUS LEVEL
   // =====================================================
 
-  const levelSelesai = semuaSkillMemenuhiSyarat && reflectionCompleted;
+  const levelSelesai =
+    semuaSkillMemenuhiSyarat && reflectionCompleted;
 
   // =====================================================
   // RENDER
@@ -317,7 +350,10 @@ export default function LevelFourScreen() {
       style={styles.halaman}
       resizeMode="cover"
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#FFF5E6" />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#FFF5E6"
+      />
 
       <ScrollView
         contentContainerStyle={styles.konten}
@@ -331,20 +367,30 @@ export default function LevelFourScreen() {
             style={styles.tombolKembali}
             accessibilityLabel="Kembali ke daftar level"
           >
-            <Ionicons name="chevron-back" size={28} color="#493D30" />
+            <Ionicons
+              name="chevron-back"
+              size={28}
+              color="#493D30"
+            />
           </Pressable>
 
           <View style={styles.bilahProgres}>
             <View
               style={[
                 styles.progresTerisi,
-                levelSelesai && styles.progresTerisiSelesai,
+                levelSelesai &&
+                  styles.progresTerisiSelesai,
               ]}
             />
           </View>
 
           <View style={styles.poin}>
-            <Ionicons name="star" size={17} color="#F3B51B" />
+            <Ionicons
+              name="star"
+              size={17}
+              color="#F3B51B"
+            />
+
             <Text style={styles.teksPoin}>120</Text>
           </View>
         </View>
@@ -353,7 +399,9 @@ export default function LevelFourScreen() {
 
         <View style={styles.headerMateri}>
           <View style={styles.labelLevel}>
-            <Text style={styles.teksLabelLevel}>LEVEL {LEVEL}</Text>
+            <Text style={styles.teksLabelLevel}>
+              LEVEL {LEVEL}
+            </Text>
           </View>
 
           <Text style={styles.judulLevel}>
@@ -365,123 +413,264 @@ export default function LevelFourScreen() {
           </Text>
         </View>
 
-       {/* =================================================
-                   MATERI
-               ================================================== */}
-       
-              <View style={styles.kartuMateri}>
-  <View style={styles.judulKartuMateri}>
-    <Text style={styles.teksJudulMateri}>
-      Mix It Up! Positive + Comparative + Superlative
-    </Text>
-  </View>
+        {/* =================================================
+            MATERI
+        ================================================== */}
 
-  <View style={styles.barisMateri}>
-    <Text style={styles.teksMateri}>
-      In this lesson, we will combine three degrees of comparison:
-      Positive, Comparative, and Superlative.
-      {"\n\n"}
-      Pada materi ini, kita akan menggabungkan tiga tingkatan
-      perbandingan: Positive, Comparative, dan Superlative.
-    </Text>
-  </View>
+        <View style={styles.kartuMateri}>
+          {/* JUDUL + AUDIO */}
 
-  <View style={styles.barisMateri}>
-    <Text style={styles.teksMateri}>
-      <Text style={{ fontWeight: "bold" }}>
-        1. Positive Degree{"\n"}
-      </Text>
-      Use as + adjective + as to show that two people or things
-      have the same quality.
-      {"\n\n"}
-      Gunakan as + adjective + as untuk menunjukkan bahwa dua orang
-      atau benda memiliki kualitas yang sama.
-    </Text>
-  </View>
+          <View style={styles.judulKartuMateri}>
+            <Text
+              style={styles.teksJudulMateri}
+              numberOfLines={2}
+            >
+              Mix It Up! Positive + Comparative + Superlative
+            </Text>
 
-  <View style={styles.barisContoh}>
-    <Text style={styles.teksMateri}>
-      Danny is as tall as Jack.
-    </Text>
-  </View>
+            <Pressable
+              onPress={toggleAudio}
+              style={({ pressed }) => [
+                styles.tombolAudio,
+                pressed && styles.tombolAudioDitekan,
+              ]}
+              accessibilityLabel={
+                audioStatus.playing
+                  ? "Stop audio"
+                  : "Play audio"
+              }
+            >
+              <Ionicons
+                name={
+                  audioStatus.playing
+                    ? "volume-high"
+                    : "volume-medium-outline"
+                }
+                size={21}
+                color="#367C4A"
+              />
+            </Pressable>
+          </View>
 
-  <View style={styles.barisMateri}>
-    <Text style={styles.teksMateri}>
-      <Text style={{ fontWeight: "bold" }}>
-        2. Comparative Degree{"\n"}
-      </Text>
-      Use adjective + -er + than or more + adjective + than to
-      compare two people or things.
-      {"\n\n"}
-      Gunakan adjective + -er + than atau more + adjective + than
-      untuk membandingkan dua orang atau benda.
-    </Text>
-  </View>
+          {/* INTRODUCTION */}
 
-  <View style={styles.barisContoh}>
-    <Text style={styles.teksMateri}>
-      Sultan is taller than Jack.
-    </Text>
-  </View>
+          <View style={styles.barisMateri}>
+            <Text style={styles.teksMateri}>
+              In this lesson, we will learn how to use
+              three degrees of comparison: Positive,
+              Comparative, and Superlative.
+              {"\n\n"}
+              We can use them to describe people,
+              animals, or things.
+              {"\n\n"}
+              Pada materi ini, kita akan mempelajari tiga
+              tingkatan perbandingan: Positive,
+              Comparative, dan Superlative.
+            </Text>
+          </View>
 
-  <View style={styles.barisMateri}>
-    <Text style={styles.teksMateri}>
-      <Text style={{ fontWeight: "bold" }}>
-        3. Superlative Degree{"\n"}
-      </Text>
-      Use the + adjective + -est or the most + adjective to show
-      the highest quality within a group.
-      {"\n\n"}
-      Gunakan the + adjective + -est atau the most + adjective
-      untuk menunjukkan kualitas paling tinggi dalam sebuah kelompok.
-    </Text>
-  </View>
+          {/* POSITIVE */}
 
-  <View style={styles.barisContoh}>
-    <Text style={styles.teksMateri}>
-      Fatih is the tallest boy.
-    </Text>
-  </View>
+          <View style={styles.barisMateri}>
+            <Text style={styles.teksMateri}>
+              <Text style={{ fontWeight: "bold" }}>
+                1. Positive Degree{"\n"}
+              </Text>
 
-  <View style={styles.catatanMateri}>
-    <View style={styles.kontenCatatan}>
-      <Text style={styles.judulCatatan}>
-        Remember This!
-      </Text>
-      <Text style={styles.teksCatatan}>
-        Positive: as + adjective + as{"\n"}
-        Comparative: adjective + -er / more + adjective + than{"\n"}
-        Superlative: the + adjective + -est / the most + adjective
-        {"\n\n"}
-        Perhatikan bagaimana ide yang sama, yaitu tinggi badan,
-        dapat berubah menjadi tiga tingkatan perbandingan.
-      </Text>
-    </View>
-  </View>
+              Use Positive Degree when we describe one
+              person, animal, or thing, or when two things
+              have the same quality.
+              {"\n\n"}
+              Untuk menunjukkan bahwa dua orang atau benda
+              memiliki kualitas yang sama, we can use:
+              {"\n"}
+              <Text style={{ fontWeight: "800" }}>
+                as + adjective + as
+              </Text>
+            </Text>
+          </View>
 
-  <View style={styles.barisMateri}>
-    <Text style={styles.teksMateri}>
-      <Text style={{ fontWeight: "bold" }}>
-        Let's Mix Them Together!{"\n"}
-      </Text>
-      See how the same idea (height) changes across all three degrees?
-      Now let's mix them together!
-      {"\n\n"}
-      Perhatikan bagaimana ide yang sama, yaitu tinggi badan,
-      berubah dalam ketiga tingkatan perbandingan. Sekarang,
-      mari kita gabungkan semuanya!
-    </Text>
-  </View>
-</View>
+          <View style={styles.barisContoh}>
+            <Text style={styles.teksMateri}>
+              The giraffe is as tall as the tree.
+            </Text>
+          </View>
+
+          {/* COMPARATIVE */}
+
+          <View style={styles.barisMateri}>
+            <Text style={styles.teksMateri}>
+              <Text style={{ fontWeight: "bold" }}>
+                2. Comparative Degree{"\n"}
+              </Text>
+
+              Use Comparative Degree to compare
+              two people, animals, or things.
+              {"\n\n"}
+              For short adjectives, use:
+              {"\n"}
+              <Text style={{ fontWeight: "800" }}>
+                adjective + -er + than
+              </Text>
+              {"\n\n"}
+              For long adjectives, use:
+              {"\n"}
+              <Text style={{ fontWeight: "800" }}>
+                more + adjective + than
+              </Text>
+            </Text>
+          </View>
+
+          <View style={styles.barisContoh}>
+            <Text style={styles.teksMateri}>
+              The giraffe is taller than the lion.
+              {"\n\n"}
+              The elephant is more dangerous than
+              the rabbit.
+            </Text>
+          </View>
+
+          {/* SUPERLATIVE */}
+
+          <View style={styles.barisMateri}>
+            <Text style={styles.teksMateri}>
+              <Text style={{ fontWeight: "bold" }}>
+                3. Superlative Degree{"\n"}
+              </Text>
+
+              Use Superlative Degree to show that one
+              person, animal, or thing has the highest
+              or lowest quality in a group.
+              {"\n\n"}
+              For short adjectives, use:
+              {"\n"}
+              <Text style={{ fontWeight: "800" }}>
+                the + adjective + -est
+              </Text>
+              {"\n\n"}
+              For long adjectives, use:
+              {"\n"}
+              <Text style={{ fontWeight: "800" }}>
+                the most + adjective
+              </Text>
+            </Text>
+          </View>
+
+          <View style={styles.barisContoh}>
+            <Text style={styles.teksMateri}>
+              The giraffe is the tallest animal.
+              {"\n\n"}
+              The cheetah is the fastest animal.
+            </Text>
+          </View>
+
+          {/* REMEMBER */}
+
+          <View style={styles.catatanMateri}>
+            <View style={styles.kontenCatatan}>
+              <Text style={styles.judulCatatan}>
+                Remember This! ⭐
+              </Text>
+
+              <Text style={styles.teksCatatan}>
+                Positive:
+                {"\n"}
+                as + adjective + as
+                {"\n\n"}
+                Comparative:
+                {"\n"}
+                adjective + -er + than
+                {"\n"}
+                more + adjective + than
+                {"\n\n"}
+                Superlative:
+                {"\n"}
+                the + adjective + -est
+                {"\n"}
+                the most + adjective
+              </Text>
+            </View>
+          </View>
+
+          {/* COMPARISON TABLE */}
+
+          <View style={styles.barisMateri}>
+            <Text style={styles.teksMateri}>
+              <Text style={{ fontWeight: "bold" }}>
+                Let's Compare! 🔎{"\n\n"}
+              </Text>
+
+              <Text style={{ fontWeight: "800" }}>
+                tall
+              </Text>
+              {"\n"}
+              Positive: as tall as
+              {"\n"}
+              Comparative: taller than
+              {"\n"}
+              Superlative: the tallest
+              {"\n\n"}
+
+              <Text style={{ fontWeight: "800" }}>
+                beautiful
+              </Text>
+              {"\n"}
+              Positive: as beautiful as
+              {"\n"}
+              Comparative: more beautiful than
+              {"\n"}
+              Superlative: the most beautiful
+            </Text>
+          </View>
+
+          {/* FINAL EXPLANATION */}
+
+          <View style={styles.barisMateri}>
+            <Text style={styles.teksMateri}>
+              <Text style={{ fontWeight: "bold" }}>
+                Let's Mix Them Together! 🎲{"\n"}
+              </Text>
+
+              Look carefully at the number of things
+              we compare.
+              {"\n\n"}
+
+              <Text style={{ fontWeight: "800" }}>
+                Two things → Comparative
+              </Text>
+              {"\n"}
+              The lion is faster than the elephant.
+              {"\n\n"}
+
+              <Text style={{ fontWeight: "800" }}>
+                A group → Superlative
+              </Text>
+              {"\n"}
+              The cheetah is the fastest animal.
+              {"\n\n"}
+
+              <Text style={{ fontWeight: "800" }}>
+                Same quality → Positive
+              </Text>
+              {"\n"}
+              The lion is as strong as the tiger.
+            </Text>
+          </View>
+        </View>
 
         {/* DAFTAR SKILL */}
 
         <View style={styles.bagianSkill}>
-          <Text style={styles.judulSkill}>PRACTICE THE 4 SKILLS</Text>
+          <Text style={styles.judulSkill}>
+            PRACTICE THE 4 SKILLS
+          </Text>
 
           {loadingProgress ? (
             <View style={styles.loadingProgress}>
-              <ActivityIndicator size="small" color="#65A879" />
+              <ActivityIndicator
+                size="small"
+                color="#65A879"
+              />
 
               <Text style={styles.loadingProgressText}>
                 Loading your progress...
@@ -494,7 +683,9 @@ export default function LevelFourScreen() {
                   key={skill.id}
                   skill={skill}
                   bintangEmas={skillSelesai[skill.id]}
-                  saatDitekan={() => bukaSkill(skill.id)}
+                  saatDitekan={() =>
+                    bukaSkill(skill.id)
+                  }
                 />
               ))}
             </View>
@@ -515,12 +706,19 @@ export default function LevelFourScreen() {
                 />
               </View>
 
-              <View style={styles.reflectionTextContainer}>
-                <Text style={styles.reflectionTitle}>Great job!</Text>
+              <View
+                style={styles.reflectionTextContainer}
+              >
+                <Text style={styles.reflectionTitle}>
+                  Great job!
+                </Text>
 
-                <Text style={styles.reflectionDescription}>
-                  You completed the 4 skills. Complete your reflection before
-                  moving to the next level.
+                <Text
+                  style={styles.reflectionDescription}
+                >
+                  You completed the 4 skills. Complete
+                  your reflection before moving to the
+                  next level.
                 </Text>
               </View>
             </View>
@@ -547,7 +745,9 @@ export default function LevelFourScreen() {
                 : styles.tombolLanjutNonaktif,
             ]}
           >
-            <Text style={styles.teksTombolLanjut}>Next</Text>
+            <Text style={styles.teksTombolLanjut}>
+              Next
+            </Text>
 
             <Ionicons
               name="chevron-forward"
@@ -599,20 +799,27 @@ function KartuSkill({
         />
       </View>
 
-      <Text style={styles.namaSkill}>{skill.nama}</Text>
+      <Text style={styles.namaSkill}>
+        {skill.nama}
+      </Text>
 
       <View style={styles.daftarBintang}>
         {Array.from({
           length: TOTAL_STARS,
         }).map((_, index) => {
-          const sudahDiperoleh = index < bintangEmas;
+          const sudahDiperoleh =
+            index < bintangEmas;
 
           return (
             <Ionicons
               key={`${skill.id}-bintang-${index}`}
               name="star"
               size={18}
-              color={sudahDiperoleh ? "#F2B51B" : "#CBD5E1"}
+              color={
+                sudahDiperoleh
+                  ? "#F2B51B"
+                  : "#CBD5E1"
+              }
             />
           );
         })}
@@ -739,9 +946,28 @@ const styles = StyleSheet.create({
   },
 
   teksJudulMateri: {
+    flex: 1,
     color: "#367C4A",
     fontSize: 15,
+    lineHeight: 20,
     fontWeight: "900",
+  },
+
+  tombolAudio: {
+    marginLeft: "auto",
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#D8EEDB",
+    borderWidth: 1,
+    borderColor: "#A9D3AE",
+  },
+
+  tombolAudioDitekan: {
+    backgroundColor: "#C1E3C7",
+    transform: [{ scale: 0.94 }],
   },
 
   barisMateri: {

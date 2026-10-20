@@ -1,6 +1,11 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
+import {
+  useAudioPlayer,
+  useAudioPlayerStatus,
+} from 'expo-audio';
 import { useCallback, useState } from 'react';
+
 import {
   ActivityIndicator,
   Alert,
@@ -88,6 +93,21 @@ const DAFTAR_SKILL: Skill[] = [
 // =====================================================
 
 export default function LevelOneScreen() {
+  // ===================================================
+  // AUDIO MATERI
+  // ===================================================
+
+  const audioPlayer = useAudioPlayer(
+    require('../../../assets/audio/level-1/listening/Positive Degree.wav'),
+  );
+
+  const audioStatus =
+    useAudioPlayerStatus(audioPlayer);
+
+  // ===================================================
+  // PROGRESS SKILL
+  // ===================================================
+
   const [skillSelesai, setSkillSelesai] =
     useState<Record<SkillId, number>>({
       listening: 0,
@@ -99,11 +119,27 @@ export default function LevelOneScreen() {
   const [loadingProgress, setLoadingProgress] =
     useState(true);
 
+  const [totalStars, setTotalStars] = useState(0);
+
   const [reflectionVisible, setReflectionVisible] =
     useState(false);
 
   const [reflectionCompleted, setReflectionCompleted] =
     useState(false);
+
+  // ===================================================
+  // TOGGLE AUDIO
+  // ===================================================
+
+  function toggleAudio() {
+    if (audioStatus.playing) {
+      audioPlayer.pause();
+      return;
+    }
+
+    audioPlayer.seekTo(0);
+    audioPlayer.play();
+  }
 
   // =====================================================
   // CEK APAKAH SEMUA SKILL SUDAH MINIMAL 2 BINTANG
@@ -175,7 +211,14 @@ export default function LevelOneScreen() {
             writing: writingStars,
           };
 
+          const totalBintang =
+            listeningStars +
+            speakingStars +
+            readingStars +
+            writingStars;
+
           setSkillSelesai(progressBaru);
+          setTotalStars(totalBintang);
 
           // =================================================
           // CEK REFLECTION
@@ -381,7 +424,8 @@ export default function LevelOneScreen() {
             <View
               style={[
                 styles.progresTerisi,
-                levelSelesai && styles.progresTerisiSelesai,
+                levelSelesai &&
+                  styles.progresTerisiSelesai,
               ]}
             />
           </View>
@@ -394,7 +438,7 @@ export default function LevelOneScreen() {
             />
 
             <Text style={styles.teksPoin}>
-              120
+              {totalStars}/12
             </Text>
           </View>
         </View>
@@ -411,11 +455,11 @@ export default function LevelOneScreen() {
           </View>
 
           <Text style={styles.judulLevel}>
-            Level 1: Positive Degree
+            Level 1: Describing Things
           </Text>
 
           <Text style={styles.deskripsiLevel}>
-            Describe one thing on its own
+            Learn how to describe things and show equal qualities.
           </Text>
         </View>
 
@@ -424,78 +468,225 @@ export default function LevelOneScreen() {
         ================================================== */}
 
         <View style={styles.kartuMateri}>
+
+          {/* =================================================
+              JUDUL MATERI + AUDIO
+          ================================================== */}
+
           <View style={styles.judulKartuMateri}>
             <MaterialCommunityIcons
-              name="sprout"
+              name="book-open-page-variant"
               size={22}
               color="#34834B"
             />
 
             <Text style={styles.teksJudulMateri}>
-              Positive Degree
+              Describing Things
             </Text>
+
+            {/* =================================================
+                BUTTON AUDIO
+            ================================================== */}
+
+            <Pressable
+              onPress={toggleAudio}
+              style={({ pressed }) => [
+                styles.tombolAudio,
+                pressed &&
+                  styles.tombolAudioDitekan,
+              ]}
+              accessibilityLabel={
+                audioStatus.playing
+                  ? 'Stop audio'
+                  : 'Play audio'
+              }
+            >
+              <Ionicons
+                name={
+                  audioStatus.playing
+                    ? 'volume-high'
+                    : 'volume-medium-outline'
+                }
+                size={20}
+                color="#367C4A"
+              />
+            </Pressable>
           </View>
+
+          {/* =================================================
+              WHAT IS IT?
+          ================================================== */}
 
           <View style={styles.barisMateri}>
+            <Text style={styles.judulBagianMateri}>
+              What is it?
+            </Text>
+
             <Text style={styles.teksMateri}>
-              Subject + adjective
+              The base form of an adjective or adverb.
             </Text>
           </View>
+
+          {/* =================================================
+              PATTERN
+          ================================================== */}
 
           <View style={styles.barisMateri}>
-            <Text style={styles.teksMateri}>
-              Equal comparison: as + adjective + as
+            <Text style={styles.judulBagianMateri}>
+              Pattern
             </Text>
+
+            <View style={styles.patternBox}>
+              <Text style={styles.teksPattern}>
+                Subject + [Adjective / Adverb]
+              </Text>
+
+              <Text style={styles.teksContohPattern}>
+                Example: tall, fast, long
+              </Text>
+            </View>
           </View>
 
-          <View style={styles.barisContoh}>
-            <Text style={styles.teksMateri}>
-              The giraffe is tall.
+          {/* =================================================
+              EXAMPLES
+          ================================================== */}
+
+          <View style={styles.barisMateri}>
+            <Text style={styles.judulBagianMateri}>
+              Examples
             </Text>
 
-            <Ionicons
-              name="checkmark-circle"
-              size={20}
-              color="#64B8C9"
+            <View style={styles.contohItem}>
+              <Ionicons
+                name="checkmark-circle"
+                size={19}
+                color="#64B8C9"
+              />
+
+              <Text style={styles.teksContoh}>
+                "The giraffe is tall."
+              </Text>
+            </View>
+
+            <View style={styles.contohItem}>
+              <Ionicons
+                name="checkmark-circle"
+                size={19}
+                color="#64B8C9"
+              />
+
+              <Text style={styles.teksContoh}>
+                "The pencil is long."
+              </Text>
+            </View>
+          </View>
+
+          {/* =================================================
+              COMPARING TWO THINGS
+          ================================================== */}
+
+          <View style={styles.subjudulMateri}>
+            <MaterialCommunityIcons
+              name="compare-horizontal"
+              size={21}
+              color="#34834B"
             />
+
+            <Text style={styles.teksSubjudulMateri}>
+              Comparing Two Things Easily
+            </Text>
           </View>
 
-          <View style={styles.barisContoh}>
-            <Text style={styles.teksMateri}>
-              My house is as big as your house.
+          {/* =================================================
+              WHAT IS IT - COMPARING
+          ================================================== */}
+
+          <View style={styles.barisMateri}>
+            <Text style={styles.judulBagianMateri}>
+              What is it?
             </Text>
 
-            <Ionicons
-              name="checkmark-circle"
-              size={20}
-              color="#64B8C9"
-            />
+            <Text style={styles.teksMateri}>
+              It describes a quality or attribute without
+              making any comparison, or shows that two
+              things are equal.
+            </Text>
           </View>
 
-          <View style={styles.barisContoh}>
-            <Text style={styles.teksMateri}>
-              Pizza is as delicious as burger.
+          {/* =================================================
+              PATTERN AS...AS
+          ================================================== */}
+
+          <View style={styles.barisMateri}>
+            <Text style={styles.judulBagianMateri}>
+              Pattern
             </Text>
 
-            <Ionicons
-              name="checkmark-circle"
-              size={20}
-              color="#64B8C9"
-            />
+            <View style={styles.patternBox}>
+              <Text style={styles.teksPattern}>
+                as + [Adjective / Adverb] + as
+              </Text>
+            </View>
           </View>
+
+          {/* =================================================
+              EXAMPLES AS...AS
+          ================================================== */}
+
+          <View style={styles.barisMateri}>
+            <Text style={styles.judulBagianMateri}>
+              Examples
+            </Text>
+
+            <View style={styles.contohItem}>
+              <Ionicons
+                name="checkmark-circle"
+                size={19}
+                color="#64B8C9"
+              />
+
+              <Text style={styles.teksContoh}>
+                "My house is as big as your house."
+              </Text>
+            </View>
+
+            <View style={styles.contohItem}>
+              <Ionicons
+                name="checkmark-circle"
+                size={19}
+                color="#64B8C9"
+              />
+
+              <Text style={styles.teksContoh}>
+                "Pizza is as delicious as burger."
+              </Text>
+            </View>
+          </View>
+
+          {/* =================================================
+              REMEMBER THIS
+          ================================================== */}
 
           <View style={styles.catatanMateri}>
-            <Ionicons
-              name="warning"
-              size={19}
-              color="#98731B"
-            />
+            <View style={styles.ikonCatatan}>
+              <Ionicons
+                name="bulb"
+                size={19}
+                color="#98731B"
+              />
+            </View>
 
-            <Text style={styles.teksCatatan}>
-              "As...as" shows that two things have
-              the SAME degree of quality — it is
-              always wrapped by two "as"!
-            </Text>
+            <View style={styles.kontenCatatan}>
+              <Text style={styles.judulCatatan}>
+                Remember This!
+              </Text>
+
+              <Text style={styles.teksCatatan}>
+                "As ... as" shows that two things have
+                the SAME degree of quality — it is always
+                wrapped by two "as"!
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -553,15 +744,23 @@ export default function LevelOneScreen() {
                 />
               </View>
 
-              <View style={styles.reflectionTextContainer}>
+              <View
+                style={
+                  styles.reflectionTextContainer
+                }
+              >
                 <Text style={styles.reflectionTitle}>
                   Great job!
                 </Text>
 
-                <Text style={styles.reflectionDescription}>
-                  You completed the 4 skills. Complete
-                  your reflection before moving to the
-                  next level.
+                <Text
+                  style={
+                    styles.reflectionDescription
+                  }
+                >
+                  You completed the 4 skills.
+                  Complete your reflection before
+                  moving to the next level.
                 </Text>
               </View>
             </View>
@@ -814,7 +1013,33 @@ const styles = StyleSheet.create({
     color: '#367C4A',
     fontSize: 15,
     fontWeight: '900',
+    flex: 1,
   },
+
+  // ===================================================
+  // AUDIO
+  // ===================================================
+
+  tombolAudio: {
+    marginLeft: 'auto',
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#D8EEDB',
+    borderWidth: 1,
+    borderColor: '#A9D3AE',
+  },
+
+  tombolAudioDitekan: {
+    backgroundColor: '#C1E3C7',
+    transform: [{ scale: 0.94 }],
+  },
+
+  // ===================================================
+  // BAGIAN MATERI
+  // ===================================================
 
   barisMateri: {
     backgroundColor: '#FFFFFF',
@@ -824,7 +1049,62 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
 
+  judulBagianMateri: {
+    color: '#367C4A',
+    fontSize: 12,
+    lineHeight: 18,
+    fontWeight: '900',
+    marginBottom: 5,
+  },
+
   teksMateri: {
+    color: '#39434B',
+    fontSize: 13,
+    lineHeight: 19,
+    fontWeight: '600',
+  },
+
+  // ===================================================
+  // PATTERN
+  // ===================================================
+
+  patternBox: {
+    backgroundColor: '#F1F8F1',
+    borderWidth: 1,
+    borderColor: '#C6E0CA',
+    borderRadius: 10,
+    paddingHorizontal: 11,
+    paddingVertical: 10,
+  },
+
+  teksPattern: {
+    color: '#367C4A',
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '900',
+  },
+
+  teksContohPattern: {
+    marginTop: 4,
+    color: '#776B5E',
+    fontSize: 11,
+    lineHeight: 17,
+    fontWeight: '600',
+    fontStyle: 'italic',
+  },
+
+  // ===================================================
+  // EXAMPLES
+  // ===================================================
+
+  contohItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    marginBottom: 8,
+  },
+
+  teksContoh: {
     flex: 1,
     color: '#39434B',
     fontSize: 13,
@@ -832,29 +1112,66 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  barisContoh: {
+  // ===================================================
+  // SUBJUDUL MATERI
+  // ===================================================
+
+  subjudulMateri: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 7,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#DFF0E1',
     borderRadius: 11,
     paddingHorizontal: 12,
-    paddingVertical: 11,
-    marginBottom: 7,
+    paddingVertical: 10,
+    marginTop: 5,
+    marginBottom: 8,
   },
+
+  teksSubjudulMateri: {
+    flex: 1,
+    color: '#367C4A',
+    fontSize: 13,
+    lineHeight: 19,
+    fontWeight: '900',
+  },
+
+  // ===================================================
+  // CATATAN / REMEMBER THIS
+  // ===================================================
 
   catatanMateri: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 7,
+    gap: 9,
     backgroundColor: '#FFF1BD',
     borderRadius: 11,
     padding: 11,
     marginTop: 3,
   },
 
-  teksCatatan: {
+  ikonCatatan: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#FFE5A0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  kontenCatatan: {
     flex: 1,
+  },
+
+  judulCatatan: {
+    color: '#685321',
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: '900',
+    marginBottom: 4,
+  },
+
+  teksCatatan: {
     color: '#685321',
     fontSize: 11,
     lineHeight: 17,

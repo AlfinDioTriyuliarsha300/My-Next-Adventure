@@ -15,9 +15,13 @@ import {
 import { router } from "expo-router";
 
 import {
-  getStudentLevelProgress,
-  getStudentTotalPoints,
-} from "../services/auth/authService";
+  ambilProgress,
+  hitungBintang,
+} from "../services/auth/learningProgress";
+
+import {
+  apakahReflectionSelesai,
+} from "../services/auth/levelReflection";
 
 const levels = [
   {
@@ -54,7 +58,7 @@ export default function LevelsScreen() {
 
   const [unlockedLevels, setUnlockedLevels] = useState(1);
 
-  const [totalPoints, setTotalPoints] = useState(0);
+  const [totalStars, setTotalStars] = useState(0);
 
   const [loading, setLoading] = useState(true);
 
@@ -70,50 +74,167 @@ export default function LevelsScreen() {
     try {
       setLoading(true);
 
-      /*
-       * Ambil progress level dan total poin
-       * secara bersamaan.
-       */
-      const [progress, points] = await Promise.all([
-        getStudentLevelProgress(),
-        getStudentTotalPoints(),
-      ]);
-
-      /*
-       * Simpan total poin.
-       */
-      setTotalPoints(points);
-
-      /*
-       * Level 1 selalu terbuka.
-       */
       let highestUnlocked = 1;
+      let currentLevelStars = 0;
 
-      progress.forEach((item) => {
-        if (item.unlocked && item.level_number > highestUnlocked) {
-          highestUnlocked = item.level_number;
+      // =====================================================
+      // CEK LEVEL 1 - 4
+      // =====================================================
+
+      for (let level = 1; level <= 4; level++) {
+        const [
+          listeningProgress,
+          speakingProgress,
+          readingProgress,
+          writingProgress,
+        ] = await Promise.all([
+          ambilProgress(level, "listening"),
+          ambilProgress(level, "speaking"),
+          ambilProgress(level, "reading"),
+          ambilProgress(level, "writing"),
+        ]);
+
+        // =====================================================
+        // HITUNG BINTANG SETIAP SKILL
+        // =====================================================
+
+        const listeningStars = Math.min(
+          hitungBintang(
+            listeningProgress,
+            listeningProgress.completedQuestions,
+          ),
+          3,
+        );
+
+        const speakingStars = Math.min(
+          hitungBintang(
+            speakingProgress,
+            speakingProgress.completedQuestions,
+          ),
+          3,
+        );
+
+        const readingStars = Math.min(
+          hitungBintang(
+            readingProgress,
+            readingProgress.completedQuestions,
+          ),
+          3,
+        );
+
+        const writingStars = Math.min(
+          hitungBintang(
+            writingProgress,
+            writingProgress.completedQuestions,
+          ),
+          3,
+        );
+
+        // =====================================================
+        // TOTAL BINTANG LEVEL
+        // =====================================================
+
+        const totalLevelStars =
+          listeningStars +
+          speakingStars +
+          readingStars +
+          writingStars;
+
+        // =====================================================
+        // SIMPAN BINTANG LEVEL YANG SEDANG DIPILIH
+        // =====================================================
+
+        if (level === currentLevel) {
+          currentLevelStars = totalLevelStars;
         }
-      });
 
-      setUnlockedLevels(Math.min(highestUnlocked, 5));
+        // =====================================================
+        // SYARAT MINIMAL SETIAP SKILL
+        // =====================================================
+
+        const minimumStarsPerSkill =
+          listeningStars >= 2 &&
+          speakingStars >= 2 &&
+          readingStars >= 2 &&
+          writingStars >= 2;
+
+        // =====================================================
+        // CEK REFLECTION
+        // =====================================================
+
+        const reflectionSelesai =
+          await apakahReflectionSelesai(level);
+
+        // =====================================================
+        // LEVEL DIANGGAP SELESAI
+        //
+        // 1. Semua skill minimal 2 bintang
+        // 2. Total minimal 8 bintang
+        // 3. Reflection sudah selesai
+        // =====================================================
+
+        const levelSelesai =
+          minimumStarsPerSkill &&
+          totalLevelStars >= 8 &&
+          reflectionSelesai;
+
+        // =====================================================
+        // UNLOCK LEVEL BERIKUTNYA
+        // =====================================================
+
+        if (levelSelesai) {
+          highestUnlocked = Math.min(level + 1, 5);
+        } else {
+          // Level berikutnya tidak boleh dibuka
+          // sebelum level sekarang selesai.
+          break;
+        }
+      }
+
+      // =====================================================
+      // JIKA CURRENT LEVEL LEBIH TINGGI DARI LEVEL
+      // YANG BERHASIL DICEK KARENA TERKUNCI,
+      // AMBIL PROGRESS-NYA HANYA UNTUK TAMPILAN BINTANG.
+      // =====================================================
+
+      if (currentLevel > highestUnlocked) {
+        const [
+          listeningProgress,
+          speakingProgress,
+          readingProgress,
+          writingProgress,
+        ] = await Promise.all([
+          ambilProgress(currentLevel, "listening"),
+          ambilProgress(currentLevel, "speaking"),
+          ambilProgress(currentLevel, "reading"),
+          ambilProgress(currentLevel, "writing"),
+        ]);
+
+        currentLevelStars =
+          Math.min(listeningProgress.completedQuestions.length, 3) +
+          Math.min(speakingProgress.completedQuestions.length, 3) +
+          Math.min(readingProgress.completedQuestions.length, 3) +
+          Math.min(writingProgress.completedQuestions.length, 3);
+      }
+
+      // =====================================================
+      // SIMPAN HASIL
+      // =====================================================
+
+      setUnlockedLevels(highestUnlocked);
+      setTotalStars(currentLevelStars);
     } catch (error) {
-      console.error("Load level progress error:", error);
+      console.error(
+        "Load level star progress error:",
+        error,
+      );
 
-      /*
-       * Jika progress belum ada,
-       * Level 1 tetap bisa dimainkan.
-       */
       setUnlockedLevels(1);
-
-      /*
-       * Jika gagal mengambil poin,
-       * tampilkan 0.
-       */
-      setTotalPoints(0);
+      setTotalStars(0);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentLevel]);
 
   useEffect(() => {
     loadLevelProgress();
@@ -305,7 +426,7 @@ export default function LevelsScreen() {
                 },
               ]}
             >
-              {totalPoints}
+              {totalStars}
             </Text>
 
             <Text
@@ -316,7 +437,7 @@ export default function LevelsScreen() {
                 },
               ]}
             >
-              XP
+              STARS
             </Text>
           </View>
         </View>
@@ -485,7 +606,7 @@ const styles = StyleSheet.create({
   },
 
   // =========================
-  // POINTS
+  // STARS
   // =========================
 
   pointsContainer: {

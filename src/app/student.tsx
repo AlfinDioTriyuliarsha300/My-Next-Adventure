@@ -14,10 +14,12 @@ import {
 
 import { router } from 'expo-router';
 
+import { getCurrentProfile } from '../services/auth/authService';
+
 import {
-  getCurrentProfile,
-  getStudentTotalPoints,
-} from '../services/auth/authService';
+  ambilProgress,
+  hitungBintang,
+} from '../services/auth/learningProgress';
 
 type StudentProfile = {
   full_name: string | null;
@@ -37,7 +39,7 @@ export default function StudentScreen() {
   const [loading, setLoading] =
     useState(true);
 
-  const [totalPoints, setTotalPoints] =
+  const [totalStars, setTotalStars] =
     useState(0);
 
   useEffect(() => {
@@ -69,27 +71,74 @@ export default function StudentScreen() {
       setProfile(currentProfile);
 
       /*
-       * =========================
-       * LOAD TOTAL POINTS
-       * =========================
-       */
+      * =========================
+      * LOAD TOTAL STARS
+      * =========================
+      */
 
       try {
-        const points =
-          await getStudentTotalPoints();
+        let totalStarsStudent = 0;
 
-        setTotalPoints(points);
-      } catch (pointsError) {
+        for (let level = 1; level <= 4; level++) {
+          const [
+            listeningProgress,
+            speakingProgress,
+            readingProgress,
+            writingProgress,
+          ] = await Promise.all([
+            ambilProgress(level, 'listening'),
+            ambilProgress(level, 'speaking'),
+            ambilProgress(level, 'reading'),
+            ambilProgress(level, 'writing'),
+          ]);
+
+          const listeningStars = Math.min(
+            hitungBintang(
+              listeningProgress,
+              listeningProgress.completedQuestions,
+            ),
+            3,
+          );
+
+          const speakingStars = Math.min(
+            hitungBintang(
+              speakingProgress,
+              speakingProgress.completedQuestions,
+            ),
+            3,
+          );
+
+          const readingStars = Math.min(
+            hitungBintang(
+              readingProgress,
+              readingProgress.completedQuestions,
+            ),
+            3,
+          );
+
+          const writingStars = Math.min(
+            hitungBintang(
+              writingProgress,
+              writingProgress.completedQuestions,
+            ),
+            3,
+          );
+
+          totalStarsStudent +=
+            listeningStars +
+            speakingStars +
+            readingStars +
+            writingStars;
+        }
+
+        setTotalStars(totalStarsStudent);
+      } catch (starsError) {
         console.error(
-          'Load student points error:',
-          pointsError
+          'Load student stars error:',
+          starsError
         );
 
-        /*
-         * Jika data poin belum tersedia,
-         * tetap tampilkan 0.
-         */
-        setTotalPoints(0);
+        setTotalStars(0);
       }
     } catch (error) {
       console.error(
@@ -232,7 +281,7 @@ export default function StudentScreen() {
                 },
               ]}
             >
-              {totalPoints}
+              {totalStars}
             </Text>
 
             <Text
@@ -247,7 +296,7 @@ export default function StudentScreen() {
                 },
               ]}
             >
-              XP
+              STARS
             </Text>
           </View>
         </View>
