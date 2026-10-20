@@ -198,12 +198,12 @@ export default function LevelsScreen() {
     }
 
     if (currentLevel === 3) {
-      router.push("/level-3");
+      router.push("/Level 3/level-3");
       return;
     }
 
     if (currentLevel === 4) {
-      router.push("/level-4");
+      router.push("/Level 4/level-4");
       return;
     }
 

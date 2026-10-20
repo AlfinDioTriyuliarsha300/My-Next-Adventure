@@ -46,6 +46,8 @@ export const listeningLevel2: SkillLesson = {
         'Look at the picture, listen, then choose True or False.',
       question: 'Is the sentence you heard true?',
 
+      audio: require('../../../assets/audio/level-2/listening/medium-level2.wav'),
+
       options: [
         {
           id: 'true',

@@ -1,10 +1,12 @@
+
 import { supabase } from '../../lib/supabase';
 import type { SkillId } from '../../data/types';
+
 export type LearningProgress = {
   completedQuestions: string[];
 };
 
-// Mengambil progress siswa yang sedang login.
+// Mengambil progress berdasarkan siswa, level, dan skill.
 export async function ambilProgress(
   level: number,
   skill: SkillId,
@@ -14,9 +16,7 @@ export async function ambilProgress(
     error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError) {
-    throw authError;
-  }
+  if (authError) throw authError;
 
   if (!user) {
     throw new Error('Siswa belum login.');
@@ -29,19 +29,16 @@ export async function ambilProgress(
     .eq('level_number', level)
     .eq('skill', skill);
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 
   return {
     completedQuestions: (data ?? []).map(
-      (item) => item.question_id,
+      (item) => String(item.question_id),
     ),
   };
 }
 
 // Menyimpan soal yang berhasil dijawab benar.
-// Soal yang sudah tercatat tidak akan menambah bintang lagi.
 export async function tandaiSoalSelesai(
   level: number,
   skill: SkillId,
@@ -52,9 +49,7 @@ export async function tandaiSoalSelesai(
     error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError) {
-    throw authError;
-  }
+  if (authError) throw authError;
 
   if (!user) {
     throw new Error('Siswa belum login.');
@@ -70,22 +65,21 @@ export async function tandaiSoalSelesai(
         question_id: questionId,
       },
       {
-        onConflict: 'student_id,question_id',
+        onConflict:
+          'student_id,level_number,skill,question_id',
         ignoreDuplicates: true,
       },
     );
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 }
 
-// Menghitung bintang berdasarkan soal yang sudah selesai.
+// Menghitung bintang berdasarkan soal yang selesai.
 export function hitungBintang(
   progress: LearningProgress,
   questionIds: string[],
 ): number {
   return questionIds.filter((id) =>
-    progress.completedQuestions.includes(id),
+    progress.completedQuestions.includes(String(id)),
   ).length;
 }

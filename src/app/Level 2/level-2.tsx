@@ -1,9 +1,6 @@
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-} from '@expo/vector-icons';
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -14,18 +11,18 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
+} from "react-native";
 
 import ReflectionModal, {
   ReflectionFormData,
-} from '../../components/learning/ReflectionModal';
+} from "../../components/learning/ReflectionModal";
 
-import { ambilProgress } from '../../services/auth/learningProgress';
+import { ambilProgress } from "../../services/auth/learningProgress";
 
 import {
   apakahReflectionSelesai,
   simpanReflection,
-} from '../../services/auth/levelReflection';
+} from "../../services/auth/levelReflection";
 
 // =====================================================
 // KONFIGURASI LEVEL
@@ -42,11 +39,7 @@ const MINIMUM_STARS = 2;
 // TYPE
 // =====================================================
 
-type SkillId =
-  | 'listening'
-  | 'speaking'
-  | 'reading'
-  | 'writing';
+type SkillId = "listening" | "speaking" | "reading" | "writing";
 
 type Skill = {
   id: SkillId;
@@ -61,28 +54,28 @@ type Skill = {
 
 const DAFTAR_SKILL: Skill[] = [
   {
-    id: 'listening',
-    nama: 'Listening',
-    ikon: 'headphones',
-    warna: '#333333',
+    id: "listening",
+    nama: "Listening",
+    ikon: "headphones",
+    warna: "#333333",
   },
   {
-    id: 'speaking',
-    nama: 'Speaking',
-    ikon: 'account-voice',
-    warna: '#2783D7',
+    id: "speaking",
+    nama: "Speaking",
+    ikon: "account-voice",
+    warna: "#2783D7",
   },
   {
-    id: 'reading',
-    nama: 'Reading',
-    ikon: 'book-open-page-variant',
-    warna: '#E95C42',
+    id: "reading",
+    nama: "Reading",
+    ikon: "book-open-page-variant",
+    warna: "#E95C42",
   },
   {
-    id: 'writing',
-    nama: 'Writing',
-    ikon: 'pencil',
-    warna: '#F1A72A',
+    id: "writing",
+    nama: "Writing",
+    ikon: "pencil",
+    warna: "#F1A72A",
   },
 ];
 
@@ -91,22 +84,18 @@ const DAFTAR_SKILL: Skill[] = [
 // =====================================================
 
 export default function LevelTwoScreen() {
-  const [skillSelesai, setSkillSelesai] =
-    useState<Record<SkillId, number>>({
-      listening: 0,
-      speaking: 0,
-      reading: 0,
-      writing: 0,
-    });
+  const [skillSelesai, setSkillSelesai] = useState<Record<SkillId, number>>({
+    listening: 0,
+    speaking: 0,
+    reading: 0,
+    writing: 0,
+  });
 
-  const [loadingProgress, setLoadingProgress] =
-    useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(true);
 
-  const [reflectionVisible, setReflectionVisible] =
-    useState(false);
+  const [reflectionVisible, setReflectionVisible] = useState(false);
 
-  const [reflectionCompleted, setReflectionCompleted] =
-    useState(false);
+  const [reflectionCompleted, setReflectionCompleted] = useState(false);
 
   // =====================================================
   // CEK APAKAH SEMUA SKILL SUDAH MINIMAL 2 BINTANG
@@ -139,10 +128,10 @@ export default function LevelTwoScreen() {
             readingProgress,
             writingProgress,
           ] = await Promise.all([
-            ambilProgress(LEVEL, 'listening'),
-            ambilProgress(LEVEL, 'speaking'),
-            ambilProgress(LEVEL, 'reading'),
-            ambilProgress(LEVEL, 'writing'),
+            ambilProgress(LEVEL, "listening"),
+            ambilProgress(LEVEL, "speaking"),
+            ambilProgress(LEVEL, "reading"),
+            ambilProgress(LEVEL, "writing"),
           ]);
 
           if (!active) return;
@@ -184,8 +173,7 @@ export default function LevelTwoScreen() {
           // CEK REFLECTION
           // =================================================
 
-          const sudahReflection =
-            await apakahReflectionSelesai(LEVEL);
+          const sudahReflection = await apakahReflectionSelesai(LEVEL);
 
           if (!active) return;
 
@@ -209,10 +197,7 @@ export default function LevelTwoScreen() {
             setReflectionVisible(false);
           }
         } catch (error) {
-          console.error(
-            'Failed to load Level 2 skill progress:',
-            error,
-          );
+          console.error("Failed to load Level 2 skill progress:", error);
         } finally {
           if (active) {
             setLoadingProgress(false);
@@ -233,7 +218,7 @@ export default function LevelTwoScreen() {
   // =====================================================
 
   function kembaliKeLevel() {
-    router.replace('/levels');
+    router.replace("/levels");
   }
 
   // =====================================================
@@ -241,31 +226,29 @@ export default function LevelTwoScreen() {
   // =====================================================
 
   function bukaSkill(namaSkill: SkillId) {
-    if (namaSkill === 'listening') {
-      router.push('/Level 2/listening');
+    if (namaSkill === "listening") {
+      router.push("/Level 2/listening");
       return;
     }
 
-    if (namaSkill === 'speaking') {
-      router.push('/Level 2/speaking');
+    if (namaSkill === "speaking") {
+      router.push("/Level 2/speaking");
       return;
     }
 
-    if (namaSkill === 'reading') {
-      router.push('/Level 2/reading');
+    if (namaSkill === "reading") {
+      router.push("/Level 2/reading");
       return;
     }
 
-    if (namaSkill === 'writing') {
-      router.push('/Level 2/writing');
+    if (namaSkill === "writing") {
+      router.push("/Level 2/writing");
       return;
     }
 
     Alert.alert(
-      DAFTAR_SKILL.find(
-        (skill) => skill.id === namaSkill,
-      )?.nama ?? namaSkill,
-      'Materi dan soal skill ini akan ditambahkan pada pengembangan berikutnya.',
+      DAFTAR_SKILL.find((skill) => skill.id === namaSkill)?.nama ?? namaSkill,
+      "Materi dan soal skill ini akan ditambahkan pada pengembangan berikutnya.",
     );
   }
 
@@ -273,9 +256,7 @@ export default function LevelTwoScreen() {
   // REFLECTION SELESAI
   // =====================================================
 
-  async function handleReflectionSubmit(
-    data: ReflectionFormData,
-  ) {
+  async function handleReflectionSubmit(data: ReflectionFormData) {
     try {
       await simpanReflection({
         level_number: LEVEL,
@@ -291,18 +272,15 @@ export default function LevelTwoScreen() {
       setReflectionVisible(false);
 
       Alert.alert(
-        'Reflection Complete!',
-        'Great job! You have completed Level 2.',
+        "Reflection Complete!",
+        "Great job! You have completed Level 2.",
       );
     } catch (error) {
-      console.error(
-        'Failed to save Level 2 reflection:',
-        error,
-      );
+      console.error("Failed to save Level 2 reflection:", error);
 
       Alert.alert(
-        'Failed to Save',
-        'We could not save your reflection. Please try again.',
+        "Failed to Save",
+        "We could not save your reflection. Please try again.",
       );
 
       throw error;
@@ -316,8 +294,8 @@ export default function LevelTwoScreen() {
   function lanjutKeLevelBerikutnya() {
     if (!semuaSkillMemenuhiSyarat) {
       Alert.alert(
-        'Level Belum Selesai',
-        'Dapatkan minimal 2 bintang pada Listening, Speaking, Reading, dan Writing terlebih dahulu.',
+        "Level Belum Selesai",
+        "Dapatkan minimal 2 bintang pada Listening, Speaking, Reading, dan Writing terlebih dahulu.",
       );
       return;
     }
@@ -326,23 +304,21 @@ export default function LevelTwoScreen() {
       setReflectionVisible(true);
 
       Alert.alert(
-        'Complete Your Reflection',
-        'Please complete your reflection before continuing to the next level.',
+        "Complete Your Reflection",
+        "Please complete your reflection before continuing to the next level.",
       );
 
       return;
     }
 
-    router.push('/level-3');
+    router.push('/Level 3/level-3');
   }
 
   // =====================================================
   // STATUS LEVEL
   // =====================================================
 
-  const levelSelesai =
-    semuaSkillMemenuhiSyarat &&
-    reflectionCompleted;
+  const levelSelesai = semuaSkillMemenuhiSyarat && reflectionCompleted;
 
   // =====================================================
   // RENDER
@@ -350,14 +326,11 @@ export default function LevelTwoScreen() {
 
   return (
     <ImageBackground
-      source={require('../../../assets/images/lessons/positive-degree-background.png')}
+      source={require("../../../assets/images/lessons/positive-degree-background.png")}
       style={styles.halaman}
       resizeMode="cover"
     >
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="#FFF5E6"
-      />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFF5E6" />
 
       <ScrollView
         contentContainerStyle={styles.konten}
@@ -373,33 +346,22 @@ export default function LevelTwoScreen() {
             style={styles.tombolKembali}
             accessibilityLabel="Kembali ke daftar level"
           >
-            <Ionicons
-              name="chevron-back"
-              size={28}
-              color="#493D30"
-            />
+            <Ionicons name="chevron-back" size={28} color="#493D30" />
           </Pressable>
 
           <View style={styles.bilahProgres}>
             <View
               style={[
                 styles.progresTerisi,
-                levelSelesai &&
-                  styles.progresTerisiSelesai,
+                levelSelesai && styles.progresTerisiSelesai,
               ]}
             />
           </View>
 
           <View style={styles.poin}>
-            <Ionicons
-              name="star"
-              size={17}
-              color="#F3B51B"
-            />
+            <Ionicons name="star" size={17} color="#F3B51B" />
 
-            <Text style={styles.teksPoin}>
-              120
-            </Text>
+            <Text style={styles.teksPoin}>120</Text>
           </View>
         </View>
 
@@ -409,18 +371,12 @@ export default function LevelTwoScreen() {
 
         <View style={styles.headerMateri}>
           <View style={styles.labelLevel}>
-            <Text style={styles.teksLabelLevel}>
-              LEVEL {LEVEL}
-            </Text>
+            <Text style={styles.teksLabelLevel}>LEVEL {LEVEL}</Text>
           </View>
 
-          <Text style={styles.judulLevel}>
-            Level 2: Comparative Degree
-          </Text>
+          <Text style={styles.judulLevel}>Level 2: Comparative Degree</Text>
 
-          <Text style={styles.deskripsiLevel}>
-            Compare two things
-          </Text>
+          <Text style={styles.deskripsiLevel}>Compare two things</Text>
         </View>
 
         {/* =================================================
@@ -429,163 +385,103 @@ export default function LevelTwoScreen() {
 
         <View style={styles.kartuMateri}>
           <View style={styles.judulKartuMateri}>
-            <MaterialCommunityIcons
-              name="sprout"
-              size={22}
-              color="#34834B"
-            />
-
-            <Text style={styles.teksJudulMateri}>
-              Comparative Degree
-            </Text>
+            <Text style={styles.teksJudulMateri}>What is Comparative Degree?</Text>
           </View>
-
-          {/* LESSON TITLE */}
 
           <View style={styles.barisMateri}>
             <Text style={styles.teksMateri}>
-              41 Comparative Degree
+              Comparative Degree is a form used to compare two people, things, or
+              actions to show that one has more or less of a quality than the other.
             </Text>
           </View>
-
-          {/* MAIN EXPLANATION */}
 
           <View style={styles.barisMateri}>
             <Text style={styles.teksMateri}>
-              Comparative Degree is used to compare
-              two people, things, or actions.
+              <Text style={{ fontWeight: "bold" }}>1. Short Adjectives{"\n"}</Text>
+              For short adjectives, generally with one or two syllables, add
+              <Text style={{ fontWeight: "bold" }}> -er </Text>
+              to the adjective and use
+              <Text style={{ fontWeight: "bold" }}> than </Text>
+              to compare two things.
             </Text>
           </View>
-
-          {/* SHORT ADJECTIVE */}
-
-          <View style={styles.barisMateri}>
-            <Text style={styles.teksMateri}>
-              1–2 syllables:{'\n'}
-              adjective + -er + than
-            </Text>
-          </View>
-
-          {/* LONG ADJECTIVE */}
-
-          <View style={styles.barisMateri}>
-            <Text style={styles.teksMateri}>
-              3+ syllables:{'\n'}
-              more + adjective + than
-            </Text>
-          </View>
-
-          {/* EXAMPLE 1 */}
 
           <View style={styles.barisContoh}>
             <Text style={styles.teksMateri}>
-              The giraffe is taller than the deer.
+              tall → taller{"\n"}
+              Example: Rina is taller than Dina.
             </Text>
-
-            <Ionicons
-              name="checkmark-circle"
-              size={20}
-              color="#64B8C9"
-            />
           </View>
 
-          {/* EXAMPLE 2 */}
+          <View style={styles.barisMateri}>
+            <Text style={styles.teksMateri}>
+              <Text style={{ fontWeight: "bold" }}>2. Long Adjectives{"\n"}</Text>
+              For long adjectives, generally with three or more syllables, use
+              <Text style={{ fontWeight: "bold" }}> more </Text>
+              before the adjective and
+              <Text style={{ fontWeight: "bold" }}> than </Text>
+              after it.
+            </Text>
+          </View>
 
           <View style={styles.barisContoh}>
             <Text style={styles.teksMateri}>
-              Bill runs faster than Bob.
+              beautiful → more beautiful{"\n"}
+              Example: This flower is more beautiful than that flower.
             </Text>
-
-            <Ionicons
-              name="checkmark-circle"
-              size={20}
-              color="#64B8C9"
-            />
           </View>
-
-          {/* EXAMPLE 3 */}
-
-          <View style={styles.barisContoh}>
-            <Text style={styles.teksMateri}>
-              Satay is more delicious than burger.
-            </Text>
-
-            <Ionicons
-              name="checkmark-circle"
-              size={20}
-              color="#64B8C9"
-            />
-          </View>
-
-          {/* IRREGULAR ADJECTIVES */}
 
           <View style={styles.catatanMateri}>
-            <Ionicons
-              name="warning"
-              size={19}
-              color="#98731B"
-            />
-
             <View style={styles.kontenCatatan}>
-              <Text style={styles.judulCatatan}>
-                Irregular Adjectives
-              </Text>
-
+              <Text style={styles.judulCatatan}>Remember This!</Text>
               <Text style={styles.teksCatatan}>
-                Some adjectives change their form
-                completely:
+                Use -er for short adjectives and more for long adjectives.
+                Don't forget to use than when comparing two things!
               </Text>
+            </View>
+          </View>
 
+          <View style={styles.barisMateri}>
+            <Text style={styles.teksMateri}>
+              <Text style={{ fontWeight: "bold" }}>3. Adjective Changes{"\n"}</Text>
+              Some adjectives change their spelling when used in the comparative
+              form. Study these examples to use Comparative Degree correctly.
+            </Text>
+          </View>
+
+          <View style={styles.barisContoh}>
+            <Text style={styles.teksMateri}>
+              tall → taller{"\n"}
+              happy → happier{"\n"}
+              big → bigger{"\n"}
+              beautiful → more beautiful{"\n"}
+              good → better{"\n"}
+              bad → worse
+            </Text>
+          </View>
+
+          <View style={styles.catatanMateri}>
+            <View style={styles.kontenCatatan}>
+              <Text style={styles.judulCatatan}>Important Notes</Text>
               <Text style={styles.teksCatatan}>
-                good → better
+                • Use than to compare two people or things.{"\n"}
+                • Short adjectives generally use -er.{"\n"}
+                • Long adjectives generally use more.{"\n"}
+                • Do not combine more with adjectives that already end in -er.
               </Text>
-
-              <Text style={styles.teksCatatan}>
-                bad → worse
-              </Text>
-
-              <Text style={styles.teksCatatan}>
-                little → less
-              </Text>
-
-              <Text style={styles.teksCatatan}>
-                much / many → more
-              </Text>
-
-              <Text style={styles.teksCatatan}>
-                far → further / farther
-              </Text>
-
-              <View style={styles.warningDalam}>
-                <Ionicons
-                  name="alert-circle"
-                  size={17}
-                  color="#98731B"
-                />
-
-                <Text style={styles.teksWarningDalam}>
-                  Never say "more taller"!
-                </Text>
-              </View>
             </View>
           </View>
         </View>
-
         {/* =================================================
             DAFTAR SKILL
         ================================================== */}
 
         <View style={styles.bagianSkill}>
-          <Text style={styles.judulSkill}>
-            PRACTICE THE 4 SKILLS
-          </Text>
+          <Text style={styles.judulSkill}>PRACTICE THE 4 SKILLS</Text>
 
           {loadingProgress ? (
             <View style={styles.loadingProgress}>
-              <ActivityIndicator
-                size="small"
-                color="#65A879"
-              />
+              <ActivityIndicator size="small" color="#65A879" />
 
               <Text style={styles.loadingProgressText}>
                 Loading your progress...
@@ -597,12 +493,8 @@ export default function LevelTwoScreen() {
                 <KartuSkill
                   key={skill.id}
                   skill={skill}
-                  bintangEmas={
-                    skillSelesai[skill.id]
-                  }
-                  saatDitekan={() =>
-                    bukaSkill(skill.id)
-                  }
+                  bintangEmas={skillSelesai[skill.id]}
+                  saatDitekan={() => bukaSkill(skill.id)}
                 />
               ))}
             </View>
@@ -625,19 +517,12 @@ export default function LevelTwoScreen() {
                 />
               </View>
 
-              <View
-                style={styles.reflectionTextContainer}
-              >
-                <Text style={styles.reflectionTitle}>
-                  Great job!
-                </Text>
+              <View style={styles.reflectionTextContainer}>
+                <Text style={styles.reflectionTitle}>Great job!</Text>
 
-                <Text
-                  style={styles.reflectionDescription}
-                >
-                  You completed the 4 skills. Complete
-                  your reflection before moving to the
-                  next level.
+                <Text style={styles.reflectionDescription}>
+                  You completed the 4 skills. Complete your reflection before
+                  moving to the next level.
                 </Text>
               </View>
             </View>
@@ -650,10 +535,10 @@ export default function LevelTwoScreen() {
         <View style={styles.bagianBawah}>
           <Text style={styles.keteranganBawah}>
             {levelSelesai
-              ? 'Level completed! You are ready for the next adventure.'
+              ? "Level completed! You are ready for the next adventure."
               : semuaSkillMemenuhiSyarat
-                ? 'Complete your reflection to unlock the next level.'
-                : 'Get at least 2 stars in each skill to continue.'}
+                ? "Complete your reflection to unlock the next level."
+                : "Get at least 2 stars in each skill to continue."}
           </Text>
 
           <Pressable
@@ -666,15 +551,9 @@ export default function LevelTwoScreen() {
                 : styles.tombolLanjutNonaktif,
             ]}
           >
-            <Text style={styles.teksTombolLanjut}>
-              Next
-            </Text>
+            <Text style={styles.teksTombolLanjut}>Next</Text>
 
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color="#FFFFFF"
-            />
+            <Ionicons name="chevron-forward" size={18} color="#FFFFFF" />
           </Pressable>
         </View>
       </ScrollView>
@@ -701,11 +580,7 @@ type KartuSkillProps = {
   saatDitekan: () => void;
 };
 
-function KartuSkill({
-  skill,
-  bintangEmas,
-  saatDitekan,
-}: KartuSkillProps) {
+function KartuSkill({ skill, bintangEmas, saatDitekan }: KartuSkillProps) {
   return (
     <Pressable
       onPress={saatDitekan}
@@ -726,9 +601,7 @@ function KartuSkill({
 
       {/* Nama skill */}
 
-      <Text style={styles.namaSkill}>
-        {skill.nama}
-      </Text>
+      <Text style={styles.namaSkill}>{skill.nama}</Text>
 
       {/* Bintang progres */}
 
@@ -736,19 +609,14 @@ function KartuSkill({
         {Array.from({
           length: TOTAL_STARS,
         }).map((_, index) => {
-          const sudahDiperoleh =
-            index < bintangEmas;
+          const sudahDiperoleh = index < bintangEmas;
 
           return (
             <Ionicons
               key={`${skill.id}-bintang-${index}`}
               name="star"
               size={18}
-              color={
-                sudahDiperoleh
-                  ? '#F2B51B'
-                  : '#CBD5E1'
-              }
+              color={sudahDiperoleh ? "#F2B51B" : "#CBD5E1"}
             />
           );
         })}
@@ -764,7 +632,7 @@ function KartuSkill({
 const styles = StyleSheet.create({
   halaman: {
     flex: 1,
-    width: '100%',
+    width: "100%",
   },
 
   konten: {
@@ -779,8 +647,8 @@ const styles = StyleSheet.create({
   // ===================================================
 
   headerAtas: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     marginBottom: 22,
   },
@@ -788,45 +656,45 @@ const styles = StyleSheet.create({
   tombolKembali: {
     width: 34,
     height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   bilahProgres: {
     flex: 1,
     height: 9,
     borderRadius: 10,
-    backgroundColor: '#E7D5B4',
-    overflow: 'hidden',
+    backgroundColor: "#E7D5B4",
+    overflow: "hidden",
   },
 
   progresTerisi: {
-    width: '0%',
-    height: '100%',
-    backgroundColor: '#66A66A',
+    width: "0%",
+    height: "100%",
+    backgroundColor: "#66A66A",
   },
 
   progresTerisiSelesai: {
-    width: '100%',
-    backgroundColor: '#65A879',
+    width: "100%",
+    backgroundColor: "#65A879",
   },
 
   poin: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 5,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: '#E6D7B8',
+    borderColor: "#E6D7B8",
   },
 
   teksPoin: {
-    color: '#493D30',
+    color: "#493D30",
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 
   // ===================================================
@@ -838,8 +706,8 @@ const styles = StyleSheet.create({
   },
 
   labelLevel: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#65A879',
+    alignSelf: "flex-start",
+    backgroundColor: "#65A879",
     borderRadius: 14,
     paddingHorizontal: 11,
     paddingVertical: 6,
@@ -847,21 +715,21 @@ const styles = StyleSheet.create({
   },
 
   teksLabelLevel: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 11,
-    fontWeight: '900',
+    fontWeight: "900",
   },
 
   judulLevel: {
-    color: '#293744',
+    color: "#293744",
     fontSize: 23,
     lineHeight: 29,
-    fontWeight: '900',
+    fontWeight: "900",
   },
 
   deskripsiLevel: {
     marginTop: 5,
-    color: '#776B5E',
+    color: "#776B5E",
     fontSize: 13,
     lineHeight: 19,
   },
@@ -871,8 +739,8 @@ const styles = StyleSheet.create({
   // ===================================================
 
   kartuMateri: {
-    backgroundColor: '#E9F4E9',
-    borderColor: '#5DA875',
+    backgroundColor: "#E9F4E9",
+    borderColor: "#5DA875",
     borderWidth: 1.5,
     borderRadius: 18,
     padding: 14,
@@ -880,20 +748,20 @@ const styles = StyleSheet.create({
   },
 
   judulKartuMateri: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 7,
     marginBottom: 10,
   },
 
   teksJudulMateri: {
-    color: '#367C4A',
+    color: "#367C4A",
     fontSize: 15,
-    fontWeight: '900',
+    fontWeight: "900",
   },
 
   barisMateri: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 11,
     paddingHorizontal: 12,
     paddingVertical: 11,
@@ -902,17 +770,17 @@ const styles = StyleSheet.create({
 
   teksMateri: {
     flex: 1,
-    color: '#39434B',
+    color: "#39434B",
     fontSize: 13,
     lineHeight: 19,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   barisContoh: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 7,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 11,
     paddingHorizontal: 12,
     paddingVertical: 11,
@@ -920,10 +788,10 @@ const styles = StyleSheet.create({
   },
 
   catatanMateri: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 7,
-    backgroundColor: '#FFF1BD',
+    backgroundColor: "#FFF1BD",
     borderRadius: 11,
     padding: 11,
     marginTop: 3,
@@ -934,36 +802,36 @@ const styles = StyleSheet.create({
   },
 
   judulCatatan: {
-    color: '#685321',
+    color: "#685321",
     fontSize: 12,
     lineHeight: 17,
-    fontWeight: '900',
+    fontWeight: "900",
     marginBottom: 3,
   },
 
   teksCatatan: {
-    color: '#685321',
+    color: "#685321",
     fontSize: 11,
     lineHeight: 17,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   warningDalam: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 5,
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#E8D17D',
+    borderTopColor: "#E8D17D",
   },
 
   teksWarningDalam: {
     flex: 1,
-    color: '#685321',
+    color: "#685321",
     fontSize: 11,
     lineHeight: 17,
-    fontWeight: '900',
+    fontWeight: "900",
   },
 
   // ===================================================
@@ -975,34 +843,33 @@ const styles = StyleSheet.create({
   },
 
   judulSkill: {
-    color: '#76695A',
+    color: "#76695A",
     fontSize: 12,
-    fontWeight: '900',
+    fontWeight: "900",
     letterSpacing: 0.6,
     marginBottom: 11,
   },
 
   gridSkill: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     rowGap: 12,
   },
 
   loadingProgress: {
     minHeight: 190,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor:
-      'rgba(255, 252, 247, 0.85)',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 252, 247, 0.85)",
     borderRadius: 16,
   },
 
   loadingProgressText: {
     marginTop: 9,
-    color: '#776B5E',
+    color: "#776B5E",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   // ===================================================
@@ -1010,40 +877,40 @@ const styles = StyleSheet.create({
   // ===================================================
 
   kartuSkill: {
-    width: '48.2%',
+    width: "48.2%",
     minHeight: 125,
-    backgroundColor: '#FFFCF7',
+    backgroundColor: "#FFFCF7",
     borderWidth: 1,
-    borderColor: '#E7D4B3',
+    borderColor: "#E7D4B3",
     borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 13,
     paddingHorizontal: 8,
   },
 
   kartuSkillDitekan: {
-    backgroundColor: '#F4E8D4',
+    backgroundColor: "#F4E8D4",
     transform: [{ scale: 0.98 }],
   },
 
   areaIkonSkill: {
     height: 43,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 5,
   },
 
   namaSkill: {
-    color: '#36404A',
+    color: "#36404A",
     fontSize: 13,
-    fontWeight: '900',
+    fontWeight: "900",
     marginBottom: 7,
   },
 
   daftarBintang: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
 
@@ -1052,12 +919,12 @@ const styles = StyleSheet.create({
   // ===================================================
 
   reflectionNotice: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 10,
-    backgroundColor: '#FFF3C7',
+    backgroundColor: "#FFF3C7",
     borderWidth: 1,
-    borderColor: '#E6C76A',
+    borderColor: "#E6C76A",
     borderRadius: 15,
     padding: 12,
     marginBottom: 16,
@@ -1067,9 +934,9 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#FFE7A0',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#FFE7A0",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   reflectionTextContainer: {
@@ -1077,17 +944,17 @@ const styles = StyleSheet.create({
   },
 
   reflectionTitle: {
-    color: '#765817',
+    color: "#765817",
     fontSize: 13,
-    fontWeight: '900',
+    fontWeight: "900",
     marginBottom: 3,
   },
 
   reflectionDescription: {
-    color: '#806A35',
+    color: "#806A35",
     fontSize: 11,
     lineHeight: 17,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   // ===================================================
@@ -1095,24 +962,24 @@ const styles = StyleSheet.create({
   // ===================================================
 
   bagianBawah: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     gap: 12,
     marginTop: 2,
   },
 
   keteranganBawah: {
     flex: 1,
-    color: '#827665',
+    color: "#827665",
     fontSize: 11,
     lineHeight: 17,
   },
 
   tombolLanjut: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 4,
     borderRadius: 11,
     paddingHorizontal: 16,
@@ -1120,16 +987,16 @@ const styles = StyleSheet.create({
   },
 
   tombolLanjutAktif: {
-    backgroundColor: '#65A879',
+    backgroundColor: "#65A879",
   },
 
   tombolLanjutNonaktif: {
-    backgroundColor: '#C9C9C9',
+    backgroundColor: "#C9C9C9",
   },
 
   teksTombolLanjut: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 });
