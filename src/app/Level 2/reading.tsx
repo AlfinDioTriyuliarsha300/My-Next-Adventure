@@ -33,7 +33,7 @@ const questions = [
     difficulty: 'Easy',
 
     question:
-      'Read: Soup is delicious. Meatball is more delicious than soup. Which food is more delicious?',
+      'Soup is delicious. Meatball is more delicious than soup. Which food is more delicious?',
 
     prompt:
       '',
