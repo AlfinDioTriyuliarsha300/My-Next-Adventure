@@ -36,13 +36,13 @@ const questions = [
       'Read: Soup is delicious. Meatball is more delicious than soup. Which food is more delicious?',
 
     prompt:
-      'Read: Soup is delicious. Meatball is more delicious than soup. Which food is more delicious?',
+      '',
 
     instruction:
-      'Read the text and choose the correct answer.',
+      '',
 
     readingText:
-      'Soup is delicious. Meatball is more delicious than soup.',
+      '',
 
     options: [
       {
@@ -85,7 +85,7 @@ const questions = [
       'Which sentence is correct?',
 
     instruction:
-      'Choose the grammatically correct sentence.',
+      '',
 
     readingText: null,
 
@@ -124,16 +124,16 @@ const questions = [
     difficulty: 'Hard',
 
     question:
-      "Read: Tono's bag costs Rp100.000. Beni's bag costs Rp150.000. Which sentence is correct?",
+      "Tono's bag costs Rp100.000. Beni's bag costs Rp150.000. Which sentence is correct?",
 
     prompt:
-      "Read: Tono's bag costs Rp100.000. Beni's bag costs Rp150.000. Which sentence is correct?",
+      "",
 
     instruction:
-      'Read the text and choose the correct sentence.',
+      '',
 
     readingText:
-      "Tono's bag costs Rp100.000. Beni's bag costs Rp150.000.",
+      "",
 
     options: [
       {

@@ -70,9 +70,9 @@ const questions = [
     type: 'Speaking',
     difficulty: 'Hard',
     question:
-      'Say the long sentence out loud: My television is as big as your television, and her car runs as fast as a race car.',
+      'My television is as big as your television, and her car runs as fast as a race car.',
     prompt:
-      'Say the long sentence out loud: My television is as big as your television, and her car runs as fast as a race car.',
+      'My television is as big as your television, and her car runs as fast as a race car.',
     instruction: 'Say the long sentence out loud:',
     sentence:
       'My television is as big as your television, and her car runs as fast as a race car.',

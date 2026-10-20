@@ -54,7 +54,7 @@ const questions: WritingQuestion[] = [
     difficulty: 'Medium',
     prompt: 'Complete the sentence by choosing the correct answer:',
     instruction:
-      "Today's weather is ___ than yesterday's weather.\n\nA. Bad\nB. Baddest\nC. Worse\nD. Worst",
+      "Today's weather is ___ than yesterday's weather. (bad) \n\nA. Bad\nB. Baddest\nC. Worse\nD. Worst",
     correctAnswer: 'worse',
   },
 
@@ -64,7 +64,7 @@ const questions: WritingQuestion[] = [
     difficulty: 'Hard',
     prompt: 'Arrange the words into a correct sentence:',
     instruction:
-      'The navy watch - cheaper - The black watch - is - than',
+      'Arrange the words into a correct sentence:\n\n The navy watch - cheaper - The black watch - is - than',
     words: [
       'The navy watch',
       'cheaper',

@@ -45,6 +45,7 @@ export default function ListeningScreen() {
     questions.map((question) => question.id),
   );
 
+  // Memuat progres belajar ketika halaman dibuka.
   useEffect(() => {
     let active = true;
 
@@ -77,6 +78,7 @@ export default function ListeningScreen() {
     };
   }, []);
 
+  // Memeriksa jawaban dan menyimpan progres jika benar.
   async function handleSubmit() {
     if (!selectedAnswer || isSubmitted || saving) return;
 
@@ -116,6 +118,16 @@ export default function ListeningScreen() {
     }
   }
 
+  // Kembali dengan aman tanpa memanggil router.back() jika tidak tersedia.
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/levels');
+    }
+  }
+
+  // Berpindah ke soal berikutnya atau menyelesaikan latihan.
   function handleNextQuestion() {
     setFeedbackVisible(false);
 
@@ -124,10 +136,11 @@ export default function ListeningScreen() {
       setSelectedAnswer(null);
       setIsSubmitted(false);
     } else {
-      router.back();
+      handleBack();
     }
   }
 
+  // Menampilkan indikator ketika progres sedang dimuat.
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
@@ -148,9 +161,9 @@ export default function ListeningScreen() {
       <SafeAreaView style={styles.container}>
         <SkillHeader
           title="Listening"
-          onBack={() => router.back()}
+          onBack={handleBack}
         />
-        
+
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -241,6 +254,7 @@ export default function ListeningScreen() {
   );
 }
 
+// Styling halaman Listening Level 1.
 const styles = StyleSheet.create({
   background: {
     flex: 1,

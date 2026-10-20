@@ -37,11 +37,9 @@ const questions = [
     id: '16',
     type: 'Speaking',
     difficulty: 'Easy',
-    question:
-      'Say the sentence out loud: Bill runs faster than Bob.',
-    prompt:
-      'Say the sentence out loud: Bill runs faster than Bob.',
-    instruction: 'Say the sentence out loud:',
+    question:'Say the sentence out loud',
+    prompt:'',
+    instruction: '',
     sentence: 'Bill runs faster than Bob.',
     correctAnswer: 'Bill runs faster than Bob.',
     explanation:
@@ -53,11 +51,9 @@ const questions = [
     id: '17',
     type: 'Speaking',
     difficulty: 'Medium',
-    question:
-      'Say the sentence out loud: My score is better than his.',
-    prompt:
-      'Say the sentence out loud: My score is better than his.',
-    instruction: 'Say the sentence out loud:',
+    question:'Say the sentence out loud: My score is better than his.',
+    prompt:'',
+    instruction: '',
     sentence: 'My score is better than his.',
     correctAnswer: 'My score is better than his.',
     explanation:
@@ -69,13 +65,10 @@ const questions = [
     id: '18',
     type: 'Speaking',
     difficulty: 'Hard',
-    question:
-      'Say the long sentence out loud: Satay is more delicious than burger, and a train is faster than a bus.',
-    prompt:
-      'Say the long sentence out loud: Satay is more delicious than burger, and a train is faster than a bus.',
-    instruction: 'Say the long sentence out loud:',
-    sentence:
-      'Satay is more delicious than burger, and a train is faster than a bus.',
+    question:'Say the long sentence out loud',
+    prompt:'',
+    instruction: '',
+    sentence:'Satay is more delicious than burger, and a train is faster than a bus.',
     correctAnswer:
       'Satay is more delicious than burger, and a train is faster than a bus.',
     explanation:

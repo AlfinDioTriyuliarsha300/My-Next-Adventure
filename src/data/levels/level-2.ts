@@ -10,8 +10,8 @@ export const listeningLevel2: SkillLesson = {
       id: 'listening-2-easy',
       difficulty: 'easy',
       instruction: 'Listen, then choose the correct phrase.',
-      question: 'Which phrase is correct?',
-
+      question: '',
+       
       audio: require('../../../assets/audio/level-2/listening/easy-level2.wav'),
 
       options: [
@@ -44,8 +44,8 @@ export const listeningLevel2: SkillLesson = {
       difficulty: 'medium',
       instruction:
         'Look at the picture, listen, then choose True or False.',
-      question: 'Is the sentence you heard true?',
-
+      question: '',
+      image: require('../../../assets/images/lessons/jerapah-rusa.png'),
       audio: require('../../../assets/audio/level-2/listening/medium-level2.wav'),
 
       options: [
@@ -69,9 +69,9 @@ export const listeningLevel2: SkillLesson = {
       id: 'listening-2-hard',
       difficulty: 'hard',
       instruction:
-        'Listen, then choose the TRUE sentence.',
+        '',
       question:
-        'Which sentence matches the audio?',
+        'Listen, then choose the TRUE sentence.',
 
       audio: require('../../../assets/audio/level-2/listening/hard-level2.wav'),
 

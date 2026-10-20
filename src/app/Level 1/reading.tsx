@@ -32,10 +32,10 @@ const questions = [
     difficulty: 'Easy',
 
     question:
-      'Choose all correct. Look at the picture. Which words describe a rhinoceros?',
+      'Which words describe a rhinoceros?',
 
     prompt:
-      'Choose all correct. Look at the picture. Which words describe a rhinoceros?',
+      'Which words describe a rhinoceros?',
 
     instruction:
       'Choose all correct. Look at the picture.',
@@ -77,16 +77,10 @@ const questions = [
     difficulty: 'Easy',
 
     question:
-      'Read: Danny is as tall as Jack. They both have the same height. Who is taller?',
+      'Danny is as tall as Jack. They both have the same height. Who is taller?',
 
     prompt:
-      'Read: Danny is as tall as Jack. They both have the same height. Who is taller?',
-
-    instruction:
-      'Read the sentence and choose the correct answer.',
-
-    readingText:
-      'Danny is as tall as Jack. They both have the same height.',
+      'Danny is as tall as Jack. They both have the same height. Who is taller?',
 
     options: [
       {
@@ -123,16 +117,7 @@ const questions = [
     difficulty: 'Easy',
 
     question:
-      "Read: Rani's cat is very fast. It always catches the mouse quickly. The mouse is very small and very afraid. Which word describes the mouse?",
-
-    prompt:
-      "Read: Rani's cat is very fast. It always catches the mouse quickly. The mouse is very small and very afraid. Which word describes the mouse?",
-
-    instruction:
-      'Read the text and choose the correct answer.',
-
-    readingText:
-      "Rani's cat is very fast. It always catches the mouse quickly. The mouse is very small and very afraid.",
+      "Rani's cat is very fast. It always catches the mouse quickly. The mouse is very small and very afraid. Which word describes the mouse?",
 
     options: [
       {
@@ -524,9 +509,6 @@ export default function ReadingScreen() {
                     styles.readingText
                   }
                 >
-                  {
-                    currentQuestion.readingText
-                  }
                 </Text>
               </View>
             ) : null}

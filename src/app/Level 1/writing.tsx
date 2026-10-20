@@ -44,7 +44,7 @@ const questions: WritingQuestion[] = [
     difficulty: 'Easy',
     prompt: 'Type the answer and complete the sentence:',
     instruction:
-      'She speaks English ___ a native speaker. (fluently)',
+      'She speaks English ___ a native speaker.',
     correctAnswer: 'fluently',
   },
 
