@@ -19,8 +19,8 @@ import {
 
 import FeedbackSheet from '../../components/learning/FeedbackSheet';
 import QuestionCard from '../../components/learning/QuestionCard';
-import StarProgress from '../../components/learning/StarProgress';
 import SkillHeader from '../../components/learning/SkillHeader';
+import StarProgress from '../../components/learning/StarProgress';
 
 import {
   ambilProgress,
@@ -31,21 +31,20 @@ import {
 const LEVEL = 3;
 const SKILL = 'speaking';
 
-
 const questions = [
   {
     id: '25',
     type: 'Speaking',
     difficulty: 'Easy',
     question:
-      'Say the sentence out loud: Bill runs faster than Bob.',
+      'Antarctica is the coldest place on Earth.',
     prompt:
-      'Say the sentence out loud: Bill runs faster than Bob.',
+      'Antarctica is the coldest place on Earth.',
     instruction: 'Say the sentence out loud:',
-    sentence: 'Bill runs faster than Bob.',
-    correctAnswer: 'Bill runs faster than Bob.',
+    sentence: 'Antarctica is the coldest place on Earth.',
+    correctAnswer: 'Antarctica is the coldest place on Earth.',
     explanation:
-      'Great! You correctly used the comparative form "faster than" to compare Bill and Bob.',
+      'Great! You correctly used the superlative form "the coldest" to describe the place with the lowest temperature.',
     options: [],
     image: null,
   },
@@ -54,14 +53,14 @@ const questions = [
     type: 'Speaking',
     difficulty: 'Medium',
     question:
-      'Say the sentence out loud: My score is better than his.',
+      'He has the best score in the class.',
     prompt:
-      'Say the sentence out loud: My score is better than his.',
+      'He has the best score in the class.',
     instruction: 'Say the sentence out loud:',
-    sentence: 'My score is better than his.',
-    correctAnswer: 'My score is better than his.',
+    sentence: 'He has the best score in the class.',
+    correctAnswer: 'He has the best score in the class.',
     explanation:
-      'Excellent! You correctly used "better than" to compare two scores.',
+      'Excellent! You correctly used the superlative form "the best" to describe the highest score in the class.',
     options: [],
     image: null,
   },
@@ -70,21 +69,20 @@ const questions = [
     type: 'Speaking',
     difficulty: 'Hard',
     question:
-      'Say the long sentence out loud: Satay is more delicious than burger, and a train is faster than a bus.',
+      'Mount Everest is the highest mountain in the world. Therefore, climbing it is the most dangerous adventure for mountaineers.',
     prompt:
-      'Say the long sentence out loud: Satay is more delicious than burger, and a train is faster than a bus.',
+      'Mount Everest is the highest mountain in the world. Therefore, climbing it is the most dangerous adventure for mountaineers.',
     instruction: 'Say the long sentence out loud:',
     sentence:
-      'Satay is more delicious than burger, and a train is faster than a bus.',
+      'Mount Everest is the highest mountain in the world. Therefore, climbing it is the most dangerous adventure for mountaineers.',
     correctAnswer:
-      'Satay is more delicious than burger, and a train is faster than a bus.',
+      'Mount Everest is the highest mountain in the world. Therefore, climbing it is the most dangerous adventure for mountaineers.',
     explanation:
-      'Excellent! You successfully practiced a long sentence using "more delicious than" and "faster than" to make comparisons.',
+      'Excellent! You successfully practiced a long sentence using "the highest" and "the most dangerous" to describe the greatest degree of a quality.',
     options: [],
     image: null,
   },
 ];
-
 
 const TOTAL_QUESTIONS = questions.length;
 
@@ -103,26 +101,23 @@ export default function SpeakingScreen() {
 
   const [transcript, setTranscript] = useState('');
 
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(
-    null,
-  );
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [checking, setChecking] = useState(false);
 
-  const [feedbackVisible, setFeedbackVisible] =
-    useState(false);
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
 
-  const [completedQuestions, setCompletedQuestions] =
-    useState<string[]>([]);
+  const [completedQuestions, setCompletedQuestions] = useState<string[]>(
+    [],
+  );
 
   const [loading, setLoading] = useState(true);
 
   const [saving, setSaving] = useState(false);
 
-  const [errorMessage, setErrorMessage] =
-    useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const currentQuestion = questions[questionIndex];
 

@@ -12,12 +12,30 @@ export const listeningLevel1: SkillLesson = {
       instruction: 'Listen, then choose the correct picture.',
       question: 'Which animal is big?',
       audio: require('../../../assets/audio/level-1/listening/easy-level1.wav'),
+
       options: [
-        { id: 'elephant', text: '🐘' },
-        { id: 'mouse', text: '🐭' },
-        { id: 'rabbit', text: '🐇' },
-        { id: 'cat', text: '🐈' },
+        {
+          id: 'elephant',
+          text: 'Elephant',
+          image: '🐘',
+        },
+        {
+          id: 'mouse',
+          text: 'Mouse',
+          image: '🐭',
+        },
+        {
+          id: 'rabbit',
+          text: 'Rabbit',
+          image: '🐇',
+        },
+        {
+          id: 'cat',
+          text: 'Cat',
+          image: '🐈',
+        },
       ],
+
       correctAnswer: 'elephant',
       explanation: 'The animal you heard is an elephant.',
     },

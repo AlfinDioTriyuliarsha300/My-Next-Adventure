@@ -1,4 +1,3 @@
-
 import type { SkillLesson } from '../types';
 
 export const listeningLevel4: SkillLesson = {
@@ -16,10 +15,21 @@ export const listeningLevel4: SkillLesson = {
       audio: require('../../../assets/audio/level-4/listening/easy-level4.wav'),
 
       options: [
-        { id: 'A', text: 'Wolf' },
-        { id: 'B', text: 'Sheep' },
-        { id: 'C', text: 'Tiger' },
-        { id: 'D', text: 'Other animal' },
+        {
+          id: 'A',
+          text: 'Wolf',
+          image: '🐺',
+        },
+        {
+          id: 'B',
+          text: 'Sheep',
+          image: '🐑',
+        },
+        {
+          id: 'C',
+          text: 'Tiger',
+          image: '🐯',
+        },
       ],
 
       correctAnswer: 'B',
@@ -35,8 +45,14 @@ export const listeningLevel4: SkillLesson = {
       audio: require('../../../assets/audio/level-4/listening/medium-level4.wav'),
 
       options: [
-        { id: 'A', text: 'True' },
-        { id: 'B', text: 'False' },
+        {
+          id: 'A',
+          text: 'True',
+        },
+        {
+          id: 'B',
+          text: 'False',
+        },
       ],
 
       correctAnswer: 'A',
@@ -52,10 +68,18 @@ export const listeningLevel4: SkillLesson = {
       audio: require('../../../assets/audio/level-4/listening/hard-level4.wav'),
 
       options: [
-        { id: 'A', text: 'Option A' },
-        { id: 'B', text: 'Option B' },
-        { id: 'C', text: 'Option C' },
-        { id: 'D', text: 'Option D' },
+        {
+          id: 'A',
+          text: 'Option A',
+        },
+        {
+          id: 'B',
+          text: 'Option B',
+        },
+        {
+          id: 'C',
+          text: 'Option C',
+        },
       ],
 
       correctAnswer: 'C',

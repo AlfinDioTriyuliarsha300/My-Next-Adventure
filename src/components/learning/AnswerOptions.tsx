@@ -78,6 +78,9 @@ export default function AnswerOptions({
         const isSelected = selectedAnswer === option.id;
         const isCorrect = option.id === correctAnswer;
 
+        // Jika image berupa string, berarti kita menggunakan emoji.
+        const isEmoji = typeof option.image === 'string';
+
         return (
           <Pressable
             key={option.id}
@@ -99,8 +102,12 @@ export default function AnswerOptions({
               <View
                 style={[
                   styles.optionLabel,
-                  isSelected && !isSubmitted && styles.selectedLabel,
-                  isSubmitted && isCorrect && styles.correctLabel,
+                  isSelected &&
+                    !isSubmitted &&
+                    styles.selectedLabel,
+                  isSubmitted &&
+                    isCorrect &&
+                    styles.correctLabel,
                   isSubmitted &&
                     isSelected &&
                     !isCorrect &&
@@ -110,8 +117,12 @@ export default function AnswerOptions({
                 <Text
                   style={[
                     styles.optionLabelText,
-                    isSelected && !isSubmitted && styles.selectedLabelText,
-                    isSubmitted && isCorrect && styles.correctLabelText,
+                    isSelected &&
+                      !isSubmitted &&
+                      styles.selectedLabelText,
+                    isSubmitted &&
+                      isCorrect &&
+                      styles.correctLabelText,
                     isSubmitted &&
                       isSelected &&
                       !isCorrect &&
@@ -126,12 +137,31 @@ export default function AnswerOptions({
                 <Text style={styles.statusIcon}>✓</Text>
               )}
 
-              {isSubmitted && isSelected && !isCorrect && (
-                <Text style={styles.wrongIcon}>✕</Text>
-              )}
+              {isSubmitted &&
+                isSelected &&
+                !isCorrect && (
+                  <Text style={styles.wrongIcon}>✕</Text>
+                )}
             </View>
 
-            <View style={styles.answerContent}>
+            <View
+              style={[
+                styles.answerContent,
+                isEmoji && styles.answerContentWithEmoji,
+              ]}
+            >
+              {/* ============================= */}
+              {/* EMOJI ANIMAL */}
+              {/* ============================= */}
+              {isEmoji && (
+                <Text style={styles.animalEmoji}>
+                  {option.image as string}
+                </Text>
+              )}
+
+              {/* ============================= */}
+              {/* NAMA JAWABAN */}
+              {/* ============================= */}
               <Text
                 style={[
                   styles.optionText,
@@ -164,7 +194,7 @@ const styles = StyleSheet.create({
 
   option: {
     width: '48.5%',
-    minHeight: 120,
+    minHeight: 150,
     padding: 12,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -179,7 +209,7 @@ const styles = StyleSheet.create({
 
   compactOption: {
     width: '100%',
-    minHeight: 76,
+    minHeight: 120,
   },
 
   selectedOption: {
@@ -256,6 +286,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: 8,
     paddingHorizontal: 2,
+  },
+
+  answerContentWithEmoji: {
+    paddingTop: 4,
+  },
+
+  animalEmoji: {
+    fontSize: 58,
+    lineHeight: 70,
+    textAlign: 'center',
+    marginBottom: 4,
   },
 
   optionText: {

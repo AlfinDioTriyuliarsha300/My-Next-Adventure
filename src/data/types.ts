@@ -10,7 +10,7 @@ export type SkillId =
 export type AnswerOption = {
   id: string;
   text: string;
-  image?: number;
+  image?: number | string;
 };
 
 export type LearningQuestion = {

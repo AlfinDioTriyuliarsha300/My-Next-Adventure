@@ -350,7 +350,7 @@ export default function StudentScreen() {
 
           <Pressable
             onPress={() =>
-              router.push('/levels')
+              router.push('/describing-things')
             }
             style={({ pressed }) => [
               styles.buttonWrapper,

@@ -1,9 +1,9 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router, useFocusEffect } from 'expo-router';
 import {
   useAudioPlayer,
   useAudioPlayerStatus,
 } from 'expo-audio';
+import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 
 import {
@@ -455,7 +455,7 @@ export default function LevelOneScreen() {
           </View>
 
           <Text style={styles.judulLevel}>
-            Level 1: Describing Things
+            Level 1: Positive Degree
           </Text>
 
           <Text style={styles.deskripsiLevel}>
@@ -481,7 +481,7 @@ export default function LevelOneScreen() {
             />
 
             <Text style={styles.teksJudulMateri}>
-              Describing Things
+              Positive Degree
             </Text>
 
             {/* =================================================
