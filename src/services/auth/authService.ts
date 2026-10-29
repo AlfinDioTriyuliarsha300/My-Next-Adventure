@@ -812,3 +812,188 @@ export async function resetStudentPassword(
 
   return data;
 }
+
+/*
+ * =========================================================
+ * TEACHER - UPDATE STUDENT
+ * =========================================================
+ *
+ * Guru dapat mengubah:
+ * - nama siswa
+ * - grade
+ * - class
+ *
+ * Username siswa tidak diubah karena digunakan
+ * sebagai identitas login siswa.
+ */
+export async function updateStudent(
+  input: {
+    studentId: string;
+    fullName: string;
+    grade: number;
+    class_name: string;
+  }
+) {
+  const session = await getCurrentSession();
+
+  if (!session?.user) {
+    throw new Error('Guru belum login.');
+  }
+
+  const fullName = input.fullName.trim();
+
+  if (!fullName) {
+    throw new Error('Nama siswa wajib diisi.');
+  }
+
+  if (
+    input.grade < 1 ||
+    input.grade > 6
+  ) {
+    throw new Error(
+      'Grade siswa harus antara 1 sampai 6.'
+    );
+  }
+
+  const validClasses = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+  ];
+
+  if (
+    !validClasses.includes(
+      input.class_name
+    )
+  ) {
+    throw new Error(
+      'Class siswa tidak valid.'
+    );
+  }
+
+  const { data, error } =
+    await supabase
+      .from('profiles')
+      .update({
+        full_name: fullName,
+        grade: input.grade,
+        class_name: input.class_name,
+      })
+      .eq('id', input.studentId)
+      .eq('role', 'student')
+      .eq(
+        'created_by',
+        session.user.id
+      )
+      .select(
+        `
+        id,
+        full_name,
+        username,
+        role,
+        grade,
+        class_name,
+        must_change_password,
+        created_at
+        `
+      )
+      .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+
+/*
+ * =========================================================
+ * TEACHER - DELETE STUDENT
+ * =========================================================
+ *
+ * Penghapusan dilakukan melalui Edge Function
+ * agar akun:
+ *
+ * - Supabase Auth
+ * - profiles
+ *
+ * dapat dihapus dengan benar.
+ */
+export async function deleteStudent(
+  studentId: string
+) {
+  const session = await getCurrentSession();
+
+  if (!session?.access_token) {
+    throw new Error(
+      'Session guru tidak ditemukan.'
+    );
+  }
+
+  if (!studentId) {
+    throw new Error(
+      'ID siswa tidak ditemukan.'
+    );
+  }
+
+  const { data, error } =
+    await supabase.functions.invoke(
+      'delete-student',
+      {
+        body: {
+          student_id: studentId,
+        },
+        headers: {
+          Authorization:
+            `Bearer ${session.access_token}`,
+        },
+      }
+    );
+
+  if (error) {
+    console.error(
+      'Delete student Functions error:',
+      error
+    );
+
+    if ('context' in error && error.context) {
+      try {
+        const errorBody =
+          await error.context.json();
+
+        console.error(
+          'Delete student server response:',
+          errorBody
+        );
+
+        throw new Error(
+          errorBody?.error ||
+          'Gagal menghapus siswa.'
+        );
+      } catch (parseError) {
+        if (
+          parseError instanceof Error &&
+          parseError.message !==
+            'Gagal menghapus siswa.'
+        ) {
+          throw parseError;
+        }
+      }
+    }
+
+    throw error;
+  }
+
+  if (!data?.success) {
+    throw new Error(
+      data?.error ||
+      'Gagal menghapus siswa.'
+    );
+  }
+
+  return data;
+}

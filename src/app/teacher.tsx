@@ -21,11 +21,13 @@ import { router } from 'expo-router';
 
 import {
   createStudent,
+  deleteStudent,
   getCurrentProfile,
   getStudentProgressById,
   getTeacherStudents,
   resetStudentPassword,
   signOut,
+  updateStudent,
   updateTeacherProfile,
 } from '../services/auth/authService';
 
@@ -120,6 +122,44 @@ export default function TeacherScreen() {
     detailVisible,
     setDetailVisible,
   ] = useState(false);
+
+  /*
+  * Edit siswa.
+  */
+  const [
+    editStudent,
+    setEditStudent,
+  ] = useState<Student | null>(null);
+
+  const [
+    editName,
+    setEditName,
+  ] = useState('');
+
+  const [
+    editGrade,
+    setEditGrade,
+  ] = useState(5);
+
+  const [
+    editClassName,
+    setEditClassName,
+  ] = useState('A');
+
+  const [
+    editVisible,
+    setEditVisible,
+  ] = useState(false);
+
+  const [
+    editingStudent,
+    setEditingStudent,
+  ] = useState(false);
+
+  const [
+    deletingStudentId,
+    setDeletingStudentId,
+  ] = useState<string | null>(null);
 
   /*
    * Password hasil reset.
@@ -421,6 +461,170 @@ export default function TeacherScreen() {
       );
     } finally {
       setDetailLoading(false);
+    }
+  }
+
+  /*
+  * ==========================================
+  * EDIT STUDENT
+  * ==========================================
+  */
+
+  function handleOpenEditStudent(
+    student: Student
+  ) {
+    setEditStudent(student);
+
+    setEditName(
+      student.full_name
+    );
+
+    setEditGrade(
+      student.grade ?? 5
+    );
+
+    setEditClassName(
+      student.class_name ?? 'A'
+    );
+
+    setEditVisible(true);
+  }
+
+  async function handleSaveEditStudent() {
+    if (!editStudent) {
+      return;
+    }
+
+    const cleanName =
+      editName.trim();
+
+    if (!cleanName) {
+      Alert.alert(
+        'Data belum lengkap',
+        'Nama siswa wajib diisi.'
+      );
+
+      return;
+    }
+
+    try {
+      setEditingStudent(true);
+
+      await updateStudent({
+        studentId:
+          editStudent.id,
+
+        fullName:
+          cleanName,
+
+        grade:
+          editGrade,
+
+        class_name:
+          editClassName,
+      });
+
+      setEditVisible(false);
+      setEditStudent(null);
+
+      await loadDashboard();
+
+      Alert.alert(
+        'Berhasil',
+        'Data siswa berhasil diperbarui.'
+      );
+    } catch (error) {
+      console.error(
+        'Update student error:',
+        error
+      );
+
+      Alert.alert(
+        'Gagal',
+        error instanceof Error
+          ? error.message
+          : 'Gagal memperbarui data siswa.'
+      );
+    } finally {
+      setEditingStudent(false);
+    }
+  }
+
+  /*
+  * ==========================================
+  * DELETE STUDENT
+  * ==========================================
+  */
+
+  function handleDeleteStudentConfirm(
+    student: Student
+  ) {
+    Alert.alert(
+      'Hapus Siswa',
+      `Apakah kamu yakin ingin menghapus ${student.full_name}? Akun siswa dan data profilnya akan dihapus secara permanen.`,
+      [
+        {
+          text: 'Batal',
+          style: 'cancel',
+        },
+        {
+          text: 'Hapus',
+          style: 'destructive',
+          onPress: () =>
+            handleDeleteStudent(
+              student
+            ),
+        },
+      ]
+    );
+  }
+
+  async function handleDeleteStudent(
+    student: Student
+  ) {
+    try {
+      setDeletingStudentId(
+        student.id
+      );
+
+      /*
+      * Jika detail siswa yang dihapus
+      * sedang terbuka, tutup modal.
+      */
+      if (
+        selectedStudent?.student.id ===
+        student.id
+      ) {
+        setDetailVisible(false);
+        setSelectedStudent(null);
+      }
+
+      await deleteStudent(
+        student.id
+      );
+
+      await loadDashboard();
+
+      Alert.alert(
+        'Berhasil',
+        `${student.full_name} berhasil dihapus.`
+      );
+    } catch (error) {
+      console.error(
+        'Delete student error:',
+        error
+      );
+
+      Alert.alert(
+        'Gagal',
+        error instanceof Error
+          ? error.message
+          : 'Gagal menghapus siswa.'
+      );
+    } finally {
+      setDeletingStudentId(
+        null
+      );
     }
   }
 
@@ -1079,6 +1283,9 @@ export default function TeacherScreen() {
                     )}
                   </View>
 
+                  <View style={styles.studentActions}>
+                  {/* DETAIL */}
+
                   <Pressable
                     onPress={() =>
                       handleOpenStudent(
@@ -1097,11 +1304,72 @@ export default function TeacherScreen() {
                       Detail
                     </Text>
                   </Pressable>
+
+                  {/* EDIT */}
+
+                  <Pressable
+                    onPress={() =>
+                      handleOpenEditStudent(
+                        student
+                      )
+                    }
+                    style={
+                      styles.editButton
+                    }
+                  >
+                    <Text
+                      style={
+                        styles.editButtonText
+                      }
+                    >
+                      Edit
+                    </Text>
+                  </Pressable>
+
+                  {/* DELETE */}
+
+                  <Pressable
+                    onPress={() =>
+                      handleDeleteStudentConfirm(
+                        student
+                      )
+                    }
+                    disabled={
+                      deletingStudentId ===
+                      student.id
+                    }
+                    style={[
+                      styles.deleteButton,
+                      deletingStudentId ===
+                        student.id &&
+                        styles.buttonDisabled,
+                    ]}
+                  >
+                    {deletingStudentId ===
+                    student.id ? (
+                      <ActivityIndicator
+                        size="small"
+                        color="#FFFFFF"
+                      />
+                    ) : (
+                      <Text
+                        style={
+                          styles.deleteButtonText
+                        }
+                      >
+                        Delete
+                      </Text>
+                    )}
+                  </Pressable>
+
+                </View>
                 </View>
               )
             )
           )}
         </View>
+
+        
 
         {/* ==================================
             LOGOUT
@@ -1539,6 +1807,287 @@ export default function TeacherScreen() {
           </View>
         </View>
       </Modal>
+      {/* ====================================
+          EDIT STUDENT MODAL
+      ==================================== */}
+
+      <Modal
+        visible={editVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => {
+          if (!editingStudent) {
+            setEditVisible(false);
+          }
+        }}
+      >
+        <View
+          style={styles.modalOverlay}
+        >
+          <View
+            style={styles.editModal}
+          >
+
+            {/* HEADER */}
+
+            <View
+              style={styles.detailHeader}
+            >
+              <View>
+                <Text
+                  style={
+                    styles.detailTitle
+                  }
+                >
+                  EDIT SISWA
+                </Text>
+
+                <Text
+                  style={
+                    styles.detailStudentName
+                  }
+                >
+                  {editStudent?.full_name}
+                </Text>
+              </View>
+
+              <Pressable
+                onPress={() => {
+                  if (
+                    !editingStudent
+                  ) {
+                    setEditVisible(
+                      false
+                    );
+                  }
+                }}
+                disabled={
+                  editingStudent
+                }
+                style={
+                  styles.closeButton
+                }
+              >
+                <Text
+                  style={
+                    styles.closeButtonText
+                  }
+                >
+                  ×
+                </Text>
+              </Pressable>
+            </View>
+
+            {/* NAMA */}
+
+            <Text
+              style={styles.label}
+            >
+              Nama Siswa
+            </Text>
+
+            <TextInput
+              value={editName}
+              onChangeText={
+                setEditName
+              }
+              placeholder="Masukkan nama siswa"
+              placeholderTextColor="#9A8B6A"
+              style={styles.input}
+              autoCapitalize="words"
+              editable={
+                !editingStudent
+              }
+            />
+
+            {/* USERNAME */}
+
+            <Text
+              style={styles.label}
+            >
+              Username
+            </Text>
+
+            <View
+              style={styles.disabledInput}
+            >
+              <Text
+                style={
+                  styles.disabledInputText
+                }
+              >
+                @{editStudent?.username}
+              </Text>
+            </View>
+
+            <Text
+              style={
+                styles.inputHelpText
+              }
+            >
+              Username tidak dapat diubah
+              karena digunakan untuk login siswa.
+            </Text>
+
+            {/* GRADE */}
+
+            <Text
+              style={styles.label}
+            >
+              Grade
+            </Text>
+
+            <View
+              style={styles.optionRow}
+            >
+              {[1, 2, 3, 4, 5, 6].map(
+                (item) => {
+                  const active =
+                    editGrade === item;
+
+                  return (
+                    <Pressable
+                      key={item}
+                      onPress={() =>
+                        setEditGrade(
+                          item
+                        )
+                      }
+                      disabled={
+                        editingStudent
+                      }
+                      style={[
+                        styles.option,
+                        active &&
+                          styles.optionActive,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.optionText,
+                          active &&
+                            styles.optionTextActive,
+                        ]}
+                      >
+                        {item}
+                      </Text>
+                    </Pressable>
+                  );
+                }
+              )}
+            </View>
+
+            {/* CLASS */}
+
+            <Text
+              style={styles.label}
+            >
+              Class
+            </Text>
+
+            <View
+              style={styles.optionRow}
+            >
+              {[
+                'A',
+                'B',
+                'C',
+                'D',
+                'E',
+                'F',
+              ].map((item) => {
+                const active =
+                  editClassName ===
+                  item;
+
+                return (
+                  <Pressable
+                    key={item}
+                    onPress={() =>
+                      setEditClassName(
+                        item
+                      )
+                    }
+                    disabled={
+                      editingStudent
+                    }
+                    style={[
+                      styles.option,
+                      active &&
+                        styles.optionActive,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.optionText,
+                        active &&
+                          styles.optionTextActive,
+                      ]}
+                    >
+                      {item}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+
+            {/* SAVE */}
+
+            <Pressable
+              onPress={
+                handleSaveEditStudent
+              }
+              disabled={
+                editingStudent
+              }
+              style={[
+                styles.saveEditButton,
+                editingStudent &&
+                  styles.buttonDisabled,
+              ]}
+            >
+              {editingStudent ? (
+                <ActivityIndicator
+                  color="#FFFFFF"
+                />
+              ) : (
+                <Text
+                  style={
+                    styles.saveEditButtonText
+                  }
+                >
+                  Simpan Perubahan
+                </Text>
+              )}
+            </Pressable>
+
+            {/* CANCEL */}
+
+            <Pressable
+              onPress={() =>
+                setEditVisible(
+                  false
+                )
+              }
+              disabled={
+                editingStudent
+              }
+              style={
+                styles.cancelEditButton
+              }
+            >
+              <Text
+                style={
+                  styles.cancelEditButtonText
+                }
+              >
+                Batal
+              </Text>
+            </Pressable>
+
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
@@ -1890,6 +2439,115 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '800',
+  },
+
+  studentActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+
+  editButton: {
+    minWidth: 60,
+    height: 40,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: '#E8F1FA',
+    borderWidth: 1,
+    borderColor: '#BFD5EA',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  editButtonText: {
+    color: '#2783D7',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+
+  deleteButton: {
+    minWidth: 68,
+    height: 40,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    backgroundColor: '#B45F3C',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  deleteButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+
+  // ==================================
+  // EDIT STUDENT MODAL
+  // ==================================
+
+  editModal: {
+    maxHeight: '92%',
+    backgroundColor: '#F4E7C1',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 22,
+    paddingTop: 22,
+    paddingBottom: 30,
+  },
+
+  disabledInput: {
+    borderWidth: 1,
+    borderColor: '#E1D5B7',
+    borderRadius: 12,
+    backgroundColor: '#EDE8DA',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    minHeight: 48,
+    justifyContent: 'center',
+  },
+
+  disabledInputText: {
+    fontSize: 16,
+    color: '#8A7A5A',
+    fontWeight: '600',
+  },
+
+  inputHelpText: {
+    marginTop: 6,
+    fontSize: 12,
+    lineHeight: 17,
+    color: '#8A7A5A',
+  },
+
+  saveEditButton: {
+    marginTop: 26,
+    minHeight: 52,
+    borderRadius: 14,
+    backgroundColor: '#172B4D',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  saveEditButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+
+  cancelEditButton: {
+    marginTop: 10,
+    minHeight: 48,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#B9A77C',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  cancelEditButtonText: {
+    color: '#6E5A35',
+    fontSize: 15,
+    fontWeight: '700',
   },
 
   // ==================================
